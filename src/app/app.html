@@ -1,0 +1,13 @@
+<!-- Kangoo Xpress - Master Layout -->
+<app-header></app-header>
+
+<main class="page-body-container" id="main-content">
+  <router-outlet></router-outlet>
+</main>
+
+<app-footer></app-footer>
+
+<!-- Deferred WhatsApp Floating Action Button (Performance optimized on idle) -->
+@defer (on idle) {
+  <app-whatsapp-button></app-whatsapp-button>
+}
