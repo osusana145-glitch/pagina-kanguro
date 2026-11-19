@@ -5,9 +5,13 @@
   <router-outlet></router-outlet>
 </main>
 
-<app-footer></app-footer>
+<!-- Footer and WhatsApp button never block the first paint of the quoter -->
+@defer (on viewport) {
+  <app-footer></app-footer>
+} @placeholder {
+  <div class="footer-placeholder" aria-hidden="true"></div>
+}
 
-<!-- Deferred WhatsApp Floating Action Button (Performance optimized on idle) -->
 @defer (on idle) {
   <app-whatsapp-button></app-whatsapp-button>
 }

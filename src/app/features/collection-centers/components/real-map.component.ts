@@ -1,3 +1,5 @@
+import { IconComponent } from '../../../shared/components/icon/icon.component';
+import { I18nService } from '../../../core/services/i18n.service';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -20,9 +22,20 @@ import { CollectionCenter } from '../../../core/models/api.models';
 export type MapTileStyle = 'streets' | 'satellite' | 'topo';
 export type MapViewMode = 'interactive' | 'google';
 
+/** Escape API-provided text before it goes into Leaflet's HTML popup. */
+function esc(value: string | number | null | undefined): string {
+  return String(value ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
+}
+
 @Component({
   selector: 'app-real-map',
   standalone: true,
+  imports: [IconComponent],
   template: `
     <div class="real-map-wrapper" id="realMapSection">
       <!-- Map Header & Mode Selector -->
@@ -30,9 +43,9 @@ export type MapViewMode = 'interactive' | 'google';
         <div class="header-left">
           <div class="live-status-pill">
             <span class="live-dot"></span>
-            <span>Cartografía GIS & Navegación GPS</span>
+            <span>{{ i18n.t('map.pill') }}</span>
           </div>
-          <h3 class="map-title">Ubicaciones Oficiales en Estados Unidos</h3>
+          <h3 class="map-title">{{ i18n.t('map.title') }}</h3>
         </div>
 
         <div class="view-mode-tabs" role="tablist">
@@ -49,7 +62,7 @@ export type MapViewMode = 'interactive' | 'google';
               <line x1="8" y1="2" x2="8" y2="18"></line>
               <line x1="16" y1="6" x2="16" y2="22"></line>
             </svg>
-            <span>Mapa Interactivo</span>
+            <span>{{ i18n.t('map.tabInteractive') }}</span>
           </button>
 
           <button
@@ -64,22 +77,22 @@ export type MapViewMode = 'interactive' | 'google';
               <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
               <circle cx="12" cy="10" r="3"></circle>
             </svg>
-            <span>Google Maps Oficial</span>
+            <span>{{ i18n.t('map.tabGoogle') }}</span>
           </button>
         </div>
       </div>
 
       <!-- Quick City Bar -->
-      <div class="city-quick-bar" aria-label="Accesos rápidos a sucursales">
+      <div class="city-quick-bar" [attr.aria-label]="i18n.t('map.quickBar')">
         <button
           type="button"
           class="city-chip-btn"
           [class.active]="isViewingAll()"
           (click)="fitAllMarkers()"
-          title="Ver todas las sucursales en EE. UU."
+          [title]="i18n.t('map.viewAllTitle')"
         >
-          <span class="chip-icon">🌐</span>
-          <span>Ver Todas ({{ centers().length }})</span>
+          <span class="chip-icon"><kx-icon name="globe" [size]="14" /></span>
+          <span>{{ i18n.t('map.viewAll', { n: centers().length }) }}</span>
         </button>
 
         @for (center of centers(); track center.id) {
@@ -90,7 +103,7 @@ export type MapViewMode = 'interactive' | 'google';
             (click)="selectCenter(center)"
             [title]="center.name"
           >
-            <span class="chip-icon">📍</span>
+            <span class="chip-icon"><kx-icon name="map-pin" [size]="14" /></span>
             <span>{{ center.city }}, {{ center.state }}</span>
           </button>
         }
@@ -108,34 +121,34 @@ export type MapViewMode = 'interactive' | 'google';
 
         <!-- Tile Style Switcher Floating Overlay (Only in interactive mode) -->
         @if (viewMode() === 'interactive') {
-          <div class="map-floating-controls" aria-label="Controles del mapa">
+          <div class="map-floating-controls" [attr.aria-label]="i18n.t('map.controls')">
             <div class="tile-style-pill-group">
               <button
                 type="button"
                 class="style-chip"
                 [class.active]="tileStyle() === 'streets'"
                 (click)="setTileStyle('streets')"
-                title="Vista de calles detallada y segura con nombres de avenidas"
+                [title]="i18n.t('map.layerStreetsTitle')"
               >
-                🛣️ Calles (Detallado)
+                <kx-icon name="map" [size]="14" /> {{ i18n.t('map.layerStreets') }}
               </button>
               <button
                 type="button"
                 class="style-chip"
                 [class.active]="tileStyle() === 'satellite'"
                 (click)="setTileStyle('satellite')"
-                title="Vista satelital de alta resolución"
+                [title]="i18n.t('map.layerAerialTitle')"
               >
-                🛰️ Satélite
+                <kx-icon name="layers" [size]="14" /> {{ i18n.t('map.layerAerial') }}
               </button>
               <button
                 type="button"
                 class="style-chip"
                 [class.active]="tileStyle() === 'topo'"
                 (click)="setTileStyle('topo')"
-                title="Vista OpenStreetMap estándar"
+                [title]="i18n.t('map.layerTopoTitle')"
               >
-                🌐 Topo / OSM
+                <kx-icon name="globe" [size]="14" /> {{ i18n.t('map.layerTopo') }}
               </button>
             </div>
 
@@ -143,7 +156,7 @@ export type MapViewMode = 'interactive' | 'google';
               type="button"
               class="recenter-btn"
               (click)="fitAllMarkers()"
-              title="Centrar y mostrar todas las sucursales"
+              [title]="i18n.t('map.recenterTitle')"
             >
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                 <circle cx="12" cy="12" r="10"></circle>
@@ -153,7 +166,7 @@ export type MapViewMode = 'interactive' | 'google';
                 <line x1="2" y1="12" x2="5" y2="12"></line>
                 <line x1="19" y1="12" x2="22" y2="12"></line>
               </svg>
-              <span>Centrar red</span>
+              <span>{{ i18n.t('map.recenter') }}</span>
             </button>
           </div>
         }
@@ -172,11 +185,11 @@ export type MapViewMode = 'interactive' | 'google';
                 loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"
                 allowfullscreen
-                title="Google Maps de la sucursal seleccionada"
+                [title]="i18n.t('map.iframeTitle')"
               ></iframe>
             } @else {
               <div class="map-empty-state">
-                <p>Selecciona una sucursal para verla en Google Maps.</p>
+                <p>{{ i18n.t('map.selectPrompt') }}</p>
               </div>
             }
           </div>
@@ -188,13 +201,13 @@ export type MapViewMode = 'interactive' | 'google';
         <div class="active-center-drawer">
           <div class="drawer-header">
             <div class="center-badge-row">
-              <span class="badge badge-success">Sucursal Seleccionada</span>
+              <span class="badge badge-success">{{ i18n.t('map.selected') }}</span>
               <span class="city-badge">{{ active.city }}, {{ active.state }}</span>
             </div>
             <h3 class="drawer-center-name">{{ active.name }}</h3>
             <div class="drawer-street-badge">
-              <span class="street-icon">🛣️</span>
-              <span>Calle: <strong>{{ getStreetName(active.full_address) }}</strong> • Cruce / Zona: {{ active.city }}, {{ active.state }}</span>
+              <span class="street-icon"><kx-icon name="map" [size]="16" /></span>
+              <span>{{ i18n.t('map.street') }} <strong>{{ getStreetName(active.full_address) }}</strong> · {{ i18n.t('map.area') }} {{ active.city }}, {{ active.state }}</span>
             </div>
             <p class="drawer-address">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="loc-icon">
@@ -206,16 +219,16 @@ export type MapViewMode = 'interactive' | 'google';
                 type="button"
                 class="copy-btn"
                 (click)="copyAddress(active.full_address)"
-                [title]="copied() ? 'Copiado' : 'Copiar dirección'"
+                [title]="copied() ? i18n.t('map.copied') : i18n.t('map.copyTitle')"
               >
-                {{ copied() ? '✓ Copiado' : 'Copiar' }}
+                {{ copied() ? i18n.t('map.copied') : i18n.t('map.copy') }}
               </button>
             </p>
           </div>
 
           <div class="drawer-details">
             <div class="drawer-schedule">
-              <span class="schedule-label">🕒 Horarios de Atención:</span>
+              <span class="schedule-label"><kx-icon name="clock" [size]="14" /> {{ i18n.t('map.hours') }}</span>
               <div class="schedule-items">
                 @for (sch of active.schedule; track sch.days) {
                   <span class="sch-item">
@@ -236,7 +249,7 @@ export type MapViewMode = 'interactive' | 'google';
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
                   <polygon points="3 11 22 2 13 21 11 13 3 11"></polygon>
                 </svg>
-                <span>Cómo Llegar</span>
+                <span>{{ i18n.t('map.directions') }}</span>
               </a>
 
               <a
@@ -245,13 +258,13 @@ export type MapViewMode = 'interactive' | 'google';
                 rel="noopener noreferrer"
                 class="btn btn-streetview"
                 id="btnOpenStreetView"
-                title="Ver fachada y calle en Google Street View 360°"
+                [title]="i18n.t('map.streetViewTitle')"
               >
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                   <circle cx="12" cy="13" r="4"></circle>
                 </svg>
-                <span>Ver Calle 360° (Street View)</span>
+                <span>{{ i18n.t('map.streetView') }}</span>
               </a>
 
               <a
@@ -261,7 +274,7 @@ export type MapViewMode = 'interactive' | 'google';
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                   <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
                 </svg>
-                <span>Llamar: {{ active.phone }}</span>
+                <span>{{ i18n.t('map.call', { phone: active.phone }) }}</span>
               </a>
 
               @if (active.whatsapp) {
@@ -368,7 +381,7 @@ export type MapViewMode = 'interactive' | 'google';
 
       &.active {
         background: #FFFFFF;
-        color: var(--kangoo-primary, #E31B23);
+        color: var(--kangoo-primary, #002a8a);
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
       }
     }
@@ -401,9 +414,9 @@ export type MapViewMode = 'interactive' | 'google';
       transition: all 0.2s ease;
 
       &:hover {
-        border-color: var(--kangoo-primary, #E31B23);
+        border-color: var(--kangoo-primary, #002a8a);
         background: #FEF2F2;
-        color: var(--kangoo-primary, #E31B23);
+        color: var(--kangoo-primary, #002a8a);
       }
 
       &.active {
@@ -503,8 +516,8 @@ export type MapViewMode = 'interactive' | 'google';
 
       &:hover {
         background: #F8FAFC;
-        border-color: var(--kangoo-primary, #E31B23);
-        color: var(--kangoo-primary, #E31B23);
+        border-color: var(--kangoo-primary, #002a8a);
+        color: var(--kangoo-primary, #002a8a);
       }
     }
 
@@ -537,7 +550,7 @@ export type MapViewMode = 'interactive' | 'google';
     .active-center-drawer {
       padding: 1.5rem 1.75rem;
       background: #FFFFFF;
-      border-top: 3px solid var(--kangoo-primary, #E31B23);
+      border-top: 3px solid var(--kangoo-primary, #002a8a);
       display: flex;
       justify-content: space-between;
       gap: 2rem;
@@ -585,7 +598,7 @@ export type MapViewMode = 'interactive' | 'google';
       flex-wrap: wrap;
 
       .loc-icon {
-        color: var(--kangoo-primary, #E31B23);
+        color: var(--kangoo-primary, #002a8a);
         flex-shrink: 0;
       }
     }
@@ -650,7 +663,7 @@ export type MapViewMode = 'interactive' | 'google';
     }
 
     .btn-directions {
-      background: var(--kangoo-primary, #E31B23);
+      background: var(--kangoo-primary, #002a8a);
       color: #FFFFFF;
       font-weight: 800;
       display: inline-flex;
@@ -672,7 +685,7 @@ export type MapViewMode = 'interactive' | 'google';
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: #0A2540;
+      background: var(--kx-blue-900);
       color: #FFFFFF;
       font-weight: 700;
       padding: 0.65rem 1.2rem;
@@ -701,7 +714,7 @@ export type MapViewMode = 'interactive' | 'google';
       margin-top: 0.35rem;
 
       strong {
-        color: var(--kangoo-primary, #E31B23);
+        color: var(--kangoo-primary, #002a8a);
       }
     }
 
@@ -743,6 +756,7 @@ export type MapViewMode = 'interactive' | 'google';
 export class RealMapComponent implements OnDestroy {
   private readonly platformId = inject(PLATFORM_ID);
   private readonly sanitizer = inject(DomSanitizer);
+  readonly i18n = inject(I18nService);
 
   // Inputs & Outputs
   readonly centers = input.required<CollectionCenter[]>();
@@ -798,11 +812,22 @@ export class RealMapComponent implements OnDestroy {
     });
   }
 
+  /** Leaflet CSS is a non-injected bundle (angular.json) so it only loads with the map. */
+  private ensureLeafletCss(): void {
+    if (document.getElementById('leaflet-css')) return;
+    const link = document.createElement('link');
+    link.id = 'leaflet-css';
+    link.rel = 'stylesheet';
+    link.href = 'leaflet.css';
+    document.head.appendChild(link);
+  }
+
   private async initLeaflet(): Promise<void> {
     const container = this.mapContainerRef()?.nativeElement;
     if (!container || this.map) return;
 
     try {
+      this.ensureLeafletCss();
       this.L = await import('leaflet');
 
       // Initialize map instance centered on USA with smooth animations
@@ -933,7 +958,7 @@ export class RealMapComponent implements OnDestroy {
       <div class="kangoo-leaflet-pin ${activeClass}">
         <div class="pin-pulse-halo"></div>
         <div class="pin-head">
-          <span class="pin-kangaroo">🦘</span>
+          <svg class="pin-kangaroo" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 21.73a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73z"/><path d="M12 22V12"/><path d="m3.3 7 7.703 4.734a2 2 0 0 0 1.994 0L20.7 7"/></svg>
         </div>
         <div class="pin-tip"></div>
         <div class="pin-label-tag">${center.city}</div>
@@ -972,24 +997,20 @@ export class RealMapComponent implements OnDestroy {
       const popupHtml = `
         <div class="kangoo-popup-box">
           <div class="popup-top">
-            <span class="popup-city">${center.city}, ${center.state}</span>
-            <span class="popup-status">Abierto</span>
+            <span class="popup-city">${esc(center.city)}, ${esc(center.state)}</span>
           </div>
-          <h4 class="popup-name">${center.name}</h4>
-          <div class="popup-street-row" style="margin-bottom: 0.35rem; font-size: 0.85rem; color: #E31B23;">
-            <span>🛣️</span>
-            <strong>${street}</strong>
-          </div>
-          <p class="popup-addr">${center.full_address}</p>
+          <h4 class="popup-name">${esc(center.name)}</h4>
+          <div class="popup-street-row"><strong>${esc(street)}</strong></div>
+          <p class="popup-addr">${esc(center.full_address)}</p>
           <div class="popup-meta">
-            <span>📞 ${center.phone}</span>
+            <span>${this.i18n.t('map.phone')} ${esc(center.phone)}</span>
           </div>
-          <div class="popup-btn-group" style="display: flex; flex-direction: column; gap: 0.35rem;">
-            <a href="${center.directions_url}" target="_blank" rel="noopener noreferrer" class="popup-directions-btn">
-              Cómo llegar (Google Maps) &rarr;
+          <div class="popup-btn-group">
+            <a href="${esc(center.directions_url)}" target="_blank" rel="noopener noreferrer" class="popup-directions-btn">
+              ${this.i18n.t('map.directionsGoogle')} &rarr;
             </a>
-            <a href="${this.getStreetViewUrl(center)}" target="_blank" rel="noopener noreferrer" class="popup-streetview-btn" style="display: block; text-align: center; background: #0A2540; color: #FFFFFF; font-weight: 700; font-size: 0.78rem; padding: 0.4rem 0.85rem; border-radius: 9999px; text-decoration: none;">
-              Ver Calle 360° (Street View) &rarr;
+            <a href="${esc(this.getStreetViewUrl(center))}" target="_blank" rel="noopener noreferrer" class="popup-streetview-btn">
+              ${this.i18n.t('map.streetView')} &rarr;
             </a>
           </div>
         </div>

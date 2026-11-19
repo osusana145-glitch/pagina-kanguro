@@ -14,53 +14,27 @@ import { I18nService } from '../../core/services/i18n.service';
       <div class="top-announcement">
         <div class="container announcement-inner">
           <div class="announcement-badge">
-            <span class="live-dot"></span>
-            <span>Rutas Activas Diarias EE. UU. ⇄ México • Despacho Aduanal Garantizado</span>
+            <span class="live-dot" aria-hidden="true"></span>
+            <span>California ⇄ México • Fast and Safe</span>
           </div>
           <div class="announcement-meta">
-            <a href="tel:+17135550142" class="meta-link" aria-label="Teléfono de atención">
+            <a href="tel:+17078009318" class="meta-link" [attr.aria-label]="i18n.t('header.phoneAria')">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
-              <span>+1 (713) 555-0142</span>
+              <span>+1 (707) 800-9318</span>
             </a>
-            <span class="meta-divider">•</span>
-            <span class="meta-schedule">Lun-Sáb: 9am - 6:30pm</span>
+            <span class="meta-divider" aria-hidden="true">•</span>
+            <span class="meta-schedule">Cotati / Santa Rosa, CA</span>
           </div>
         </div>
       </div>
 
       <!-- Main Navigation Header -->
-      <nav class="main-nav" role="navigation" aria-label="Navegación principal">
+      <nav class="main-nav" [attr.aria-label]="i18n.t('header.navAria')">
         <div class="container nav-container">
           <!-- Logo -->
           <app-logo></app-logo>
 
-          <!-- Quick Tracking Search in Header -->
-          <div class="header-search">
-            <form (ngSubmit)="submitTrackingSearch()" class="quick-track-form" role="search">
-              <label for="headerTrackInput" class="sr-only">Número de guía de rastreo</label>
-              <div class="track-input-wrapper">
-                <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-                  <circle cx="11" cy="11" r="8"></circle>
-                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                </svg>
-                <input
-                  id="headerTrackInput"
-                  type="text"
-                  class="quick-track-input"
-                  [placeholder]="i18n.t('nav.trackPlaceholder')"
-                  [(ngModel)]="searchGuide"
-                  name="searchGuide"
-                  autocomplete="off"
-                  spellcheck="false"
-                />
-                <button type="submit" class="quick-track-btn" aria-label="Buscar rastreo de guía">
-                  <span>{{ i18n.t('tracking.searchBtn') }}</span>
-                </button>
-              </div>
-            </form>
-          </div>
-
-          <!-- Desktop Navigation Links -->
+          <!-- Desktop Navigation Links (Spaced & Uncompressed) -->
           <div class="nav-links">
             <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">
               {{ i18n.t('nav.home') }}
@@ -80,22 +54,15 @@ import { I18nService } from '../../core/services/i18n.service';
             <a routerLink="/preguntas-frecuentes" routerLinkActive="active" class="nav-link">
               {{ i18n.t('nav.faqs') }}
             </a>
+            <a routerLink="/contacto" routerLinkActive="active" class="nav-link">
+              {{ i18n.t('nav.contact') }}
+            </a>
           </div>
 
           <!-- Actions: Language Selector & My Account -->
           <div class="nav-actions">
-            <!-- Language Selector Toggle [ ES | EN ] -->
-            <div class="lang-selector" role="group" aria-label="Selector de idioma">
-              <button
-                type="button"
-                class="lang-btn"
-                [class.active]="i18n.currentLang() === 'es'"
-                (click)="i18n.setLanguage('es')"
-                aria-label="Cambiar idioma a Español"
-              >
-                ES
-              </button>
-              <span class="lang-divider">|</span>
+            <!-- Language Selector Toggle [ EN | ES ] -->
+            <div class="lang-selector" role="group" [attr.aria-label]="i18n.t('header.langAria')">
               <button
                 type="button"
                 class="lang-btn"
@@ -105,11 +72,20 @@ import { I18nService } from '../../core/services/i18n.service';
               >
                 EN
               </button>
+                            <button
+                type="button"
+                class="lang-btn"
+                [class.active]="i18n.currentLang() === 'es'"
+                (click)="i18n.setLanguage('es')"
+                aria-label="Cambiar idioma a Español"
+              >
+                ES
+              </button>
             </div>
 
-            <!-- "Mi Cuenta" / "Entrar" CTA -->
+            <!-- "My Account" CTA -->
             <a routerLink="/cuenta" class="btn btn-secondary btn-account">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
@@ -122,15 +98,15 @@ import { I18nService } from '../../core/services/i18n.service';
               class="mobile-toggle-btn"
               (click)="isMobileMenuOpen.set(!isMobileMenuOpen())"
               [attr.aria-expanded]="isMobileMenuOpen()"
-              aria-label="Alternar menú móvil"
+              [attr.aria-label]="i18n.t('header.menuAria')"
             >
               @if (isMobileMenuOpen()) {
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="18" y1="6" x2="6" y2="18"></line>
                   <line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>
               } @else {
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <line x1="3" y1="12" x2="21" y2="12"></line>
                   <line x1="3" y1="6" x2="21" y2="6"></line>
                   <line x1="3" y1="18" x2="21" y2="18"></line>
@@ -168,6 +144,7 @@ import { I18nService } from '../../core/services/i18n.service';
                 <a routerLink="/pedido-especial" (click)="closeMobileMenu()" class="mobile-link">{{ i18n.t('nav.specialOrder') }}</a>
                 <a routerLink="/ser-centro-de-acopio" (click)="closeMobileMenu()" class="mobile-link">{{ i18n.t('nav.bePartner') }}</a>
                 <a routerLink="/contacto" (click)="closeMobileMenu()" class="mobile-link">{{ i18n.t('nav.contact') }}</a>
+                <a href="/#app" (click)="closeMobileMenu()" class="mobile-link">{{ i18n.t('nav.app') }}</a>
                 <a routerLink="/cuenta" (click)="closeMobileMenu()" class="mobile-link highlight">{{ i18n.t('nav.myAccount') }}</a>
               </div>
             </div>
@@ -177,34 +154,20 @@ import { I18nService } from '../../core/services/i18n.service';
     </header>
   `,
   styles: [`
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0, 0, 0, 0);
-      border: 0;
-    }
-
     .header-fixed {
       position: sticky;
       top: 0;
       z-index: 1000;
       width: 100%;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--kangoo-border);
-      box-shadow: 0 4px 20px rgba(10, 37, 64, 0.05);
+      background: #FFFFFF;
+      border-bottom: 1px solid var(--kx-border);
     }
 
     .top-announcement {
-      background-color: var(--kangoo-secondary);
+      background-color: var(--kx-blue-900);
       color: #FFFFFF;
-      font-size: 0.78rem;
-      padding: 0.35rem 0;
+      font-size: 0.8125rem;
+      padding: 0.375rem 0;
     }
 
     .announcement-inner {
@@ -219,29 +182,22 @@ import { I18nService } from '../../core/services/i18n.service';
       align-items: center;
       gap: 0.5rem;
       font-weight: 500;
-      color: #E2E8F0;
+      color: #FFFFFF;
     }
 
     .live-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
-      background-color: var(--kangoo-primary);
-      box-shadow: 0 0 8px var(--kangoo-primary);
-      animation: pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-      0% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.3); }
-      100% { opacity: 1; transform: scale(1); }
+      background-color: var(--kx-status-transit);
+      display: inline-block;
     }
 
     .announcement-meta {
       display: none;
       align-items: center;
       gap: 0.5rem;
-      color: #94A3B8;
+      color: #dce3f3;
 
       @media (min-width: 768px) {
         display: flex;
@@ -256,7 +212,7 @@ import { I18nService } from '../../core/services/i18n.service';
       font-weight: 600;
 
       &:hover {
-        color: var(--kangoo-primary-light);
+        color: var(--kx-blue-soft-2);
       }
     }
 
@@ -269,110 +225,49 @@ import { I18nService } from '../../core/services/i18n.service';
       align-items: center;
       justify-content: space-between;
       height: 72px;
-      gap: 1.25rem;
-    }
-
-    .header-search {
-      display: none;
-      flex: 1;
-      max-width: 320px;
-
-      @media (min-width: 1024px) {
-        display: block;
-      }
-    }
-
-    .quick-track-form {
-      width: 100%;
-    }
-
-    .track-input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      background: var(--kangoo-surface-bg);
-      border: 1.5px solid var(--kangoo-border);
-      border-radius: var(--radius-full);
-      padding: 0.2rem 0.25rem 0.2rem 0.85rem;
-      transition: all var(--transition-fast);
-
-      &:focus-within {
-        border-color: var(--kangoo-secondary);
-        background: #FFFFFF;
-        box-shadow: 0 0 0 3px rgba(10, 37, 64, 0.08);
-      }
-    }
-
-    .search-icon {
-      color: var(--kangoo-neutral-muted);
-      margin-right: 0.4rem;
-      flex-shrink: 0;
-    }
-
-    .quick-track-input {
-      border: none;
-      background: transparent;
-      outline: none;
-      font-size: 0.82rem;
-      color: var(--kangoo-secondary);
-      width: 100%;
-
-      &::placeholder {
-        color: var(--kangoo-neutral-muted);
-      }
-    }
-
-    .quick-track-btn {
-      background: var(--kangoo-primary);
-      color: #FFFFFF;
-      border: none;
-      border-radius: var(--radius-full);
-      padding: 0.35rem 0.85rem;
-      font-size: 0.76rem;
-      font-weight: 700;
-      cursor: pointer;
-      white-space: nowrap;
-      transition: background var(--transition-fast);
-
-      &:hover {
-        background: var(--kangoo-primary-hover);
-      }
+      gap: clamp(0.5rem, 2vw, 2.5rem);
     }
 
     .nav-links {
       display: none;
+      flex: 1;
+      justify-content: center;
       align-items: center;
-      gap: 1.5rem;
+      gap: clamp(1.25rem, 2.2vw, 2.5rem);
 
-      @media (min-width: 880px) {
+      @media (min-width: 1140px) {
         display: flex;
       }
     }
 
     .nav-link {
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--kangoo-secondary);
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--kx-text-primary);
       transition: color var(--transition-fast);
       position: relative;
-      padding: 0.4rem 0;
+      display: inline-flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 0.125rem;
+      white-space: nowrap;
 
       &:hover {
-        color: var(--kangoo-primary);
+        color: var(--kx-blue-600);
       }
 
       &.active {
-        color: var(--kangoo-primary);
+        color: var(--kx-blue-600);
+        font-weight: 700;
 
         &::after {
           content: '';
           position: absolute;
-          bottom: -4px;
+          bottom: 6px;
           left: 0;
           right: 0;
           height: 2px;
-          background: var(--kangoo-primary);
-          border-radius: 2px;
+          background: var(--kx-blue-600);
         }
       }
     }
@@ -380,46 +275,54 @@ import { I18nService } from '../../core/services/i18n.service';
     .nav-actions {
       display: flex;
       align-items: center;
-      gap: 0.85rem;
+      gap: 0.5rem;
+      flex-shrink: 0;
     }
 
     .lang-selector {
       display: flex;
       align-items: center;
-      background: var(--kangoo-surface-bg);
-      border: 1px solid var(--kangoo-border);
-      border-radius: var(--radius-full);
-      padding: 0.2rem 0.45rem;
-      gap: 0.3rem;
-      font-size: 0.78rem;
+      background: var(--kx-bg-page);
+      border: 1px solid var(--kx-border);
+      border-radius: var(--kx-radius-sm);
+      padding: 0;
+      gap: 0;
+      font-size: 0.8125rem;
       font-weight: 700;
     }
 
     .lang-btn {
       background: transparent;
       border: none;
-      color: var(--kangoo-neutral-muted);
-      padding: 0.2rem 0.35rem;
-      border-radius: var(--radius-sm);
+      color: var(--kx-text-secondary);
+      min-width: 44px;
+      min-height: 42px;
+      padding: 0 0.5rem;
+      border-radius: var(--kx-radius-sm);
+      font-weight: 700;
       cursor: pointer;
-      transition: all var(--transition-fast);
+      transition: color var(--transition-fast);
 
       &:hover {
-        color: var(--kangoo-secondary);
+        color: var(--kx-blue-900);
       }
 
       &.active {
-        color: var(--kangoo-primary);
-        font-weight: 800;
+        color: var(--kx-blue-600);
+        background: #FFFFFF;
+        box-shadow: inset 0 0 0 1px var(--kx-blue-soft-3);
       }
     }
 
     .lang-divider {
-      color: var(--kangoo-border);
+      color: var(--kx-border);
+      font-size: 0.75rem;
     }
 
     .btn-account {
       display: none;
+      padding: 0.5rem 1rem;
+      font-size: 0.9375rem;
 
       @media (min-width: 640px) {
         display: inline-flex;
@@ -433,12 +336,12 @@ import { I18nService } from '../../core/services/i18n.service';
       width: 44px;
       height: 44px;
       background: transparent;
-      border: 1.5px solid var(--kangoo-border);
-      border-radius: var(--radius-lg);
-      color: var(--kangoo-secondary);
+      border: 1px solid var(--kx-border);
+      border-radius: var(--kx-radius-sm);
+      color: var(--kx-blue-900);
       cursor: pointer;
 
-      @media (min-width: 880px) {
+      @media (min-width: 1140px) {
         display: none;
       }
     }
@@ -449,46 +352,55 @@ import { I18nService } from '../../core/services/i18n.service';
       left: 0;
       right: 0;
       background: #FFFFFF;
-      border-bottom: 2px solid var(--kangoo-secondary);
+      border-bottom: 1px solid var(--kx-border);
       box-shadow: var(--shadow-xl);
-      padding: 1.25rem 1rem 2rem;
-      animation: slideDown 0.2s ease-out;
-
-      @media (min-width: 880px) {
-        display: none;
-      }
+      z-index: 999;
+      padding: 1.25rem clamp(1rem, 2.5vw, 2.5rem);
+      max-height: calc(100vh - 110px);
+      overflow-y: auto;
     }
 
-    @keyframes slideDown {
-      from { opacity: 0; transform: translateY(-8px); }
-      to { opacity: 1; transform: translateY(0); }
+    .mobile-drawer-inner {
+      display: flex;
+      flex-direction: column;
+      gap: 1.25rem;
+    }
+
+    .mobile-track-form {
+      .form-input {
+        width: 100%;
+        height: 44px;
+        border: 1px solid var(--kx-border);
+        border-radius: var(--kx-radius-sm);
+        padding: 0 0.75rem;
+      }
     }
 
     .mobile-nav-links {
       display: flex;
       flex-direction: column;
-      gap: 0.35rem;
-      margin-top: 1rem;
+      gap: 0.5rem;
     }
 
     .mobile-link {
-      display: block;
-      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      min-height: 44px;
+      padding: 0 0.75rem;
       font-size: 1rem;
-      font-weight: 600;
-      color: var(--kangoo-secondary);
-      border-radius: var(--radius-md);
+      font-weight: 500;
+      color: var(--kx-text-primary);
+      border-radius: var(--kx-radius-sm);
+      transition: background var(--transition-fast);
 
       &:hover {
-        background: var(--kangoo-surface-bg);
-        color: var(--kangoo-primary);
+        background: var(--kx-blue-soft-1);
+        color: var(--kx-blue-600);
       }
 
       &.highlight {
-        background: var(--kangoo-primary);
-        color: #FFFFFF;
-        text-align: center;
-        margin-top: 0.5rem;
+        color: var(--kx-blue-600);
+        font-weight: 700;
       }
     }
   `],
@@ -498,17 +410,15 @@ export class HeaderComponent {
   readonly i18n = inject(I18nService);
   private readonly router = inject(Router);
 
+  readonly isMobileMenuOpen = signal(false);
   searchGuide = '';
-  readonly isMobileMenuOpen = signal<boolean>(false);
 
   submitTrackingSearch(): void {
-    const raw = this.searchGuide.trim();
-    this.closeMobileMenu();
-    if (!raw) {
-      this.router.navigate(['/rastrear']);
-      return;
+    const term = this.searchGuide.trim();
+    if (term) {
+      this.closeMobileMenu();
+      this.router.navigate(['/rastrear', term]);
     }
-    this.router.navigate(['/rastrear', raw]);
   }
 
   closeMobileMenu(): void {

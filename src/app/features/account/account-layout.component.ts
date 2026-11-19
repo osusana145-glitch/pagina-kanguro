@@ -1,3 +1,4 @@
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
 import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
 import { I18nService } from '../../core/services/i18n.service';
@@ -5,32 +6,32 @@ import { I18nService } from '../../core/services/i18n.service';
 @Component({
   selector: 'app-account-layout',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, RouterLinkActive],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, IconComponent],
   template: `
     <section class="account-page-section" aria-labelledby="accountHeading">
       <div class="container account-layout">
         <!-- Sidebar Navigation -->
-        <aside class="account-sidebar" aria-label="Menú de cuenta">
+        <aside class="account-sidebar" [attr.aria-label]="i18n.t('account.menuAria')">
           <div class="user-profile-badge">
-            <div class="user-avatar">JP</div>
+            <div class="user-avatar" aria-hidden="true"><kx-icon name="users" [size]="20" /></div>
             <div>
-              <h2 id="accountHeading" class="user-name">Juan Pérez Morales</h2>
-              <span class="user-tier">Cliente Frecuente Kangoo</span>
+              <h2 id="accountHeading" class="user-name">{{ i18n.t('account.title') }}</h2>
+              <span class="user-tier">{{ i18n.t('account.subtitle') }}</span>
             </div>
           </div>
 
           <nav class="sidebar-nav">
             <a routerLink="/cuenta/envios" routerLinkActive="active" class="side-link">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg>
-              <span>Mis Envíos Realizados</span>
+              <span>{{ i18n.t('account.navShipments') }}</span>
             </a>
             <a routerLink="/cuenta/direcciones" routerLinkActive="active" class="side-link">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
-              <span>Libreta de Direcciones</span>
+              <span>{{ i18n.t('account.navAddresses') }}</span>
             </a>
             <a routerLink="/" class="side-link">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
-              <span>Nuevo Envío / Cotizar</span>
+              <span>{{ i18n.t('account.navNew') }}</span>
             </a>
           </nav>
         </aside>
@@ -51,11 +52,11 @@ import { I18nService } from '../../core/services/i18n.service';
 
     .account-layout {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 2rem;
 
       @media (min-width: 880px) {
-        grid-template-columns: 280px 1fr;
+        grid-template-columns: 280px minmax(0, 1fr);
       }
     }
 

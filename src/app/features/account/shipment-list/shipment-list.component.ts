@@ -1,3 +1,4 @@
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -14,29 +15,29 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 @Component({
   selector: 'app-shipment-list',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent],
+  imports: [IconComponent, RouterLink, StatusBadgeComponent],
   template: `
     <div class="shipments-container">
       <header class="list-header">
         <div>
-          <h1 class="page-title">Historial de Mis Envíos</h1>
-          <p class="page-subtitle">Monitorea y descarga comprobantes de tus paquetes hacia México.</p>
+          <h1 class="page-title">{{ i18n.t('shipments.title') }}</h1>
+          <p class="page-subtitle">{{ i18n.t('shipments.subtitle') }}</p>
         </div>
 
         <a routerLink="/" class="btn btn-primary btn-sm">
-          <span>+ Nuevo Envío</span>
+          <kx-icon name="plus" [size]="16" /><span>{{ i18n.t('shipments.new') }}</span>
         </a>
       </header>
 
       <!-- Status Filter Tabs -->
-      <div class="filter-tabs" role="group" aria-label="Filtrar envíos por estado">
+      <div class="filter-tabs" role="group" [attr.aria-label]="i18n.t('shipments.filterAria')">
         <button
           type="button"
           class="tab-pill"
           [class.active]="filterStatus() === 'ALL'"
           (click)="filterStatus.set('ALL')"
         >
-          Todos ({{ shipments().length }})
+          {{ i18n.t('shipments.all', { n: shipments().length }) }}
         </button>
         <button
           type="button"
@@ -44,7 +45,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
           [class.active]="filterStatus() === 'ACTIVE'"
           (click)="filterStatus.set('ACTIVE')"
         >
-          En Curso / Aduana
+          {{ i18n.t('shipments.active') }}
         </button>
         <button
           type="button"
@@ -52,7 +53,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
           [class.active]="filterStatus() === 'DELIVERED'"
           (click)="filterStatus.set('DELIVERED')"
         >
-          Entregados
+          {{ i18n.t('shipments.delivered') }}
         </button>
         <button
           type="button"
@@ -60,7 +61,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
           [class.active]="filterStatus() === 'PENDING'"
           (click)="filterStatus.set('PENDING')"
         >
-          Pendientes de Pago
+          {{ i18n.t('shipments.pending') }}
         </button>
       </div>
 
@@ -70,12 +71,12 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
           <article class="shipment-card" [class.unpaid]="!item.is_paid">
             <div class="card-top">
               <div>
-                <span class="ref-label">Referencia</span>
+                <span class="ref-label">{{ i18n.t('shipments.reference') }}</span>
                 <h2 class="ref-id">{{ item.reference_id }}</h2>
                 @if (item.tracking_number) {
-                  <span class="guide-num">Guía: {{ item.tracking_number }}</span>
+                  <span class="guide-num">{{ i18n.t('shipments.guide', { n: item.tracking_number }) }}</span>
                 } @else {
-                  <span class="guide-pending">Guía no asignada (Pendiente de pago)</span>
+                  <span class="guide-pending">{{ i18n.t('shipments.noGuide') }}</span>
                 }
               </div>
 
@@ -87,19 +88,19 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 
             <div class="card-details-row">
               <div class="detail-col">
-                <span class="d-label">Destinatario</span>
+                <span class="d-label">{{ i18n.t('shipments.recipient') }}</span>
                 <span class="d-val">{{ item.recipient_name }}</span>
               </div>
               <div class="detail-col">
-                <span class="d-label">Destino</span>
+                <span class="d-label">{{ i18n.t('shipments.destination') }}</span>
                 <span class="d-val">{{ item.destination_city }}</span>
               </div>
               <div class="detail-col">
-                <span class="d-label">Fecha</span>
+                <span class="d-label">{{ i18n.t('shipments.date') }}</span>
                 <span class="d-val">{{ item.created_at }}</span>
               </div>
               <div class="detail-col">
-                <span class="d-label">Monto Pagado</span>
+                <span class="d-label">{{ i18n.t('shipments.amount') }}</span>
                 <!-- STRICT RULE: Display API formatted only -->
                 <span class="d-val price">{{ item.total_formatted }}</span>
               </div>
@@ -108,25 +109,25 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
             <div class="card-bottom">
               @if (!item.is_paid) {
                 <a [routerLink]="['/enviar']" class="btn btn-primary btn-sm">
-                  <span>Pagar Ahora</span>
+                  <span>{{ i18n.t('shipments.payNow') }}</span>
                 </a>
               } @else {
                 <a [routerLink]="['/cuenta/envios', item.reference_id]" class="btn btn-outline btn-sm">
-                  <span>Ver Detalle y Comprobante</span>
+                  <span>{{ i18n.t('shipments.details') }}</span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                 </a>
               }
 
               @if (item.tracking_number) {
                 <a [routerLink]="['/rastrear', item.tracking_number]" class="track-link">
-                  Rastrear en Vivo ➔
+                  {{ i18n.t('shipments.track') }} <kx-icon name="arrow-right" [size]="14" />
                 </a>
               }
             </div>
           </article>
         } @empty {
           <div class="empty-list">
-            <p>No tienes envíos registrados bajo este filtro.</p>
+            <p>{{ i18n.t('shipments.empty') }}</p>
           </div>
         }
       </div>
@@ -209,6 +210,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 
     .card-top {
       display: flex;
+      flex-wrap: wrap;
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 1rem;
@@ -244,7 +246,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 
     .card-details-row {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0.85rem;
       padding: 0.85rem 0;
       border-top: 1px dashed var(--kangoo-border);
@@ -252,7 +254,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
       margin-bottom: 1rem;
 
       @media (min-width: 640px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
 

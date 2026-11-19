@@ -1,3 +1,4 @@
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -15,7 +16,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 @Component({
   selector: 'app-shipment-detail',
   standalone: true,
-  imports: [RouterLink, StatusBadgeComponent],
+  imports: [IconComponent, RouterLink, StatusBadgeComponent],
   template: `
     @if (shipment(); as detail) {
       <div class="shipment-detail-wrapper">
@@ -23,7 +24,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
         <div class="detail-nav-bar">
           <a routerLink="/cuenta/envios" class="back-link">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
-            <span>Volver a Mis Envíos</span>
+            <span>{{ i18n.t('detail.back') }}</span>
           </a>
 
           <div class="action-buttons">
@@ -36,10 +37,10 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
             >
               @if (isGeneratingPdf()) {
                 <span class="btn-spinner"></span>
-                <span>Generando enlace firmado...</span>
+                <span>{{ i18n.t('detail.generating') }}</span>
               } @else {
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                <span>Descargar Comprobante PDF</span>
+                <span>{{ i18n.t('detail.download') }}</span>
               }
             </button>
           </div>
@@ -47,8 +48,8 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 
         @if (receiptUrl()) {
           <div class="signed-receipt-banner" role="status">
-            <span>Enlace firmado generado exitosamente (válido por 60 min):</span>
-            <a [href]="receiptUrl()" target="_blank" class="download-link">Abrir Comprobante Oficial PDF ➔</a>
+            <span>{{ i18n.t('detail.linkReady') }}</span>
+            <a [href]="receiptUrl()" target="_blank" class="download-link">{{ i18n.t('detail.openPdf') }} <kx-icon name="arrow-right" [size]="14" /></a>
           </div>
         }
 
@@ -56,10 +57,10 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
         <header class="detail-header-card">
           <div class="header-main">
             <div>
-              <span class="ref-sub">Referencia de Envío</span>
+              <span class="ref-sub">{{ i18n.t('detail.reference') }}</span>
               <h1 class="ref-title">{{ detail.reference_id }}</h1>
               @if (detail.tracking_number) {
-                <span class="guide-badge">Guía Satelital: {{ detail.tracking_number }}</span>
+                <span class="guide-badge">{{ i18n.t('detail.guide', { n: detail.tracking_number }) }}</span>
               }
             </div>
             <app-status-badge
@@ -69,22 +70,22 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
           </div>
 
           <div class="meta-pills-row">
-            <span class="meta-pill">📅 Fecha: {{ detail.created_at }}</span>
-            <span class="meta-pill">📦 {{ detail.box_name }}</span>
-            <span class="meta-pill">🛡️ {{ detail.insurance_plan_name }}</span>
+            <span class="meta-pill"><kx-icon name="calendar" [size]="14" /> {{ i18n.t('detail.date', { d: detail.created_at }) }}</span>
+            <span class="meta-pill"><kx-icon name="package" [size]="14" /> {{ detail.box_name }}</span>
+            <span class="meta-pill"><kx-icon name="shield" [size]="14" /> {{ detail.insurance_plan_name }}</span>
           </div>
         </header>
 
         <!-- Addresses Route Row -->
         <div class="addresses-card">
           <div class="address-col">
-            <span class="addr-label">Origen (Centro en EE. UU.)</span>
-            <h3 class="addr-title">Houston Logistics Hub</h3>
+            <span class="addr-label">{{ i18n.t('detail.origin') }}</span>
+            <h3 class="addr-title">{{ i18n.t('detail.originHub') }}</h3>
             <p class="addr-text">{{ detail.origin_address }}</p>
           </div>
-          <div class="route-arrow">➔</div>
+          <div class="route-arrow"><kx-icon name="arrow-right" [size]="20" /></div>
           <div class="address-col">
-            <span class="addr-label">Destino (Puerta a Puerta México)</span>
+            <span class="addr-label">{{ i18n.t('detail.destination') }}</span>
             <h3 class="addr-title">{{ detail.recipient_name }}</h3>
             <p class="addr-text">{{ detail.destination_address }}</p>
           </div>
@@ -92,28 +93,28 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 
         <!-- Official Payment Breakdown (Strict Rule: from API only) -->
         <section class="breakdown-section" aria-labelledby="breakdownTitle">
-          <h2 id="breakdownTitle" class="section-title">Desglose de Cobro Oficial</h2>
+          <h2 id="breakdownTitle" class="section-title">{{ i18n.t('detail.breakdown') }}</h2>
           <div class="breakdown-card">
             <div class="breakdown-line">
-              <span>Envío Internacional Base:</span>
+              <span>{{ i18n.t('detail.base') }}</span>
               <strong>{{ detail.breakdown.base_shipping_formatted }}</strong>
             </div>
             <div class="breakdown-line">
-              <span>Despacho e Impuestos Aduanales:</span>
+              <span>{{ i18n.t('detail.customs') }}</span>
               <strong>{{ detail.breakdown.customs_tax_formatted }}</strong>
             </div>
             <div class="breakdown-line">
-              <span>Póliza de Protección y Seguro:</span>
+              <span>{{ i18n.t('detail.insurance') }}</span>
               <strong>{{ detail.breakdown.insurance_formatted }}</strong>
             </div>
             @if (detail.breakdown.extras_formatted !== '$0.00 USD') {
               <div class="breakdown-line">
-                <span>Servicios y Materiales Extras:</span>
+                <span>{{ i18n.t('detail.extras') }}</span>
                 <strong>{{ detail.breakdown.extras_formatted }}</strong>
               </div>
             }
             <div class="breakdown-total-line">
-              <span>Total Liquidado:</span>
+              <span>{{ i18n.t('detail.total') }}</span>
               <span class="total-highlight">{{ detail.total_formatted }}</span>
             </div>
           </div>
@@ -222,7 +223,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
 
     .addresses-card {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 1.5rem;
       background: #FFFFFF;
       border: 1px solid var(--kangoo-border);
@@ -231,7 +232,7 @@ import { StatusBadgeComponent } from '../../../shared/components/badge/status-ba
       align-items: center;
 
       @media (min-width: 640px) {
-        grid-template-columns: 1fr auto 1fr;
+        grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
       }
     }
 

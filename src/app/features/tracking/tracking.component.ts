@@ -1,3 +1,4 @@
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -18,15 +19,15 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
 @Component({
   selector: 'app-tracking',
   standalone: true,
-  imports: [FormsModule, RouterLink, StatusBadgeComponent],
+  imports: [IconComponent, FormsModule, RouterLink, StatusBadgeComponent],
   template: `
     <section class="tracking-page-section" aria-labelledby="trackHeading">
       <div class="container container-narrow">
         <!-- Search Header -->
         <div class="tracking-search-box">
           <div class="track-header-badge">
-            <span class="live-dot"></span>
-            <span>Sistema Oficial de Rastreo Satelital</span>
+            <span class="live-dot" aria-hidden="true"></span>
+            <span>{{ i18n.t('tracking.badge') }}</span>
           </div>
 
           <h1 id="trackHeading" class="track-title">{{ i18n.t('tracking.title') }}</h1>
@@ -51,21 +52,36 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
                 }
               </button>
             </div>
-            <span class="search-hint">Formatos soportados: KG-892344-MX, KG-654120-MX o referencia REF-PENDING-99</span>
+            <span class="search-hint">{{ i18n.t('tracking.hint') }}</span>
           </form>
+
+          <!-- Mobile app promotion -->
+          <div class="app-banner">
+            <div class="app-banner-text">
+              <span class="icon-tile"><kx-icon name="smartphone" [size]="20" /></span>
+              <div>
+                <strong>{{ i18n.t('tracking.appTitle') }}</strong>
+                <span>{{ i18n.t('tracking.appDesc') }}</span>
+              </div>
+            </div>
+            <a routerLink="/" fragment="app" class="btn btn-outline btn-sm">
+              <span>{{ i18n.t('tracking.appCta') }}</span>
+              <kx-icon name="arrow-right" [size]="16" />
+            </a>
+          </div>
         </div>
 
         <!-- Tracking Results View -->
         @if (trackingResult(); as result) {
-          <article class="tracking-result-card" aria-label="Detalle del paquete">
+          <article class="tracking-result-card" [attr.aria-label]="i18n.t('tracking.resultAria')">
             <!-- Header Bar with Status Tone & Reference -->
             <div class="result-header">
               <div>
-                <span class="ref-label">Número de Referencia</span>
+                <span class="ref-label">{{ i18n.t('tracking.refLabel') }}</span>
                 <h2 class="ref-code">{{ result.reference_id }}</h2>
                 @if (result.tracking_number) {
                   <div class="guide-tag">
-                    <span>Guía: <strong>{{ result.tracking_number }}</strong></span>
+                    <span>{{ i18n.t('tracking.guide') }} <strong>{{ result.tracking_number }}</strong></span>
                   </div>
                 }
               </div>
@@ -82,13 +98,11 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
             @if (!result.is_paid || result.status === 'pending_payment') {
               <div class="pending-payment-banner" role="alert">
                 <div class="alert-icon">
-                  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#F59E0B" stroke-width="2.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                  <kx-icon name="bell" [size]="22" />
                 </div>
                 <div class="alert-content">
-                  <h3 class="alert-title">Envío Registrado - Pago Pendiente</h3>
-                  <p class="alert-desc">
-                    El número de guía oficial y comprobante fiscal se habilitan inmediatamente después de procesar tu pago.
-                  </p>
+                  <h3 class="alert-title">{{ i18n.t('tracking.pendingTitle') }}</h3>
+                  <p class="alert-desc">{{ i18n.t('tracking.pendingDesc') }}</p>
                   @if (result.payment_cta) {
                     <a [routerLink]="result.payment_cta.action_url" class="btn btn-primary btn-sm alert-btn">
                       {{ i18n.t('tracking.payNowBtn') }}
@@ -101,7 +115,7 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
             <!-- Attention / Delay Alerts -->
             @if (result.needs_attention && result.attention_reason) {
               <div class="attention-banner">
-                <span class="att-title">Aviso de Operación:</span>
+                <span class="att-title">{{ i18n.t('tracking.notice') }}</span>
                 <span>{{ result.attention_reason }}</span>
               </div>
             }
@@ -109,26 +123,26 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
             <!-- Package Details Grid -->
             <div class="details-summary-grid">
               <div class="summary-cell">
-                <span class="cell-label">Origen</span>
+                <span class="cell-label">{{ i18n.t('tracking.origin') }}</span>
                 <span class="cell-val">{{ result.origin_city }}</span>
               </div>
               <div class="summary-cell">
-                <span class="cell-label">Destino</span>
+                <span class="cell-label">{{ i18n.t('tracking.destination') }}</span>
                 <span class="cell-val">{{ result.destination_city }}</span>
               </div>
               <div class="summary-cell">
-                <span class="cell-label">Destinatario</span>
+                <span class="cell-label">{{ i18n.t('tracking.recipient') }}</span>
                 <span class="cell-val">{{ result.recipient_name }}</span>
               </div>
               <div class="summary-cell">
-                <span class="cell-label">Fecha Estimada</span>
+                <span class="cell-label">{{ i18n.t('tracking.eta') }}</span>
                 <span class="cell-val highlight">{{ result.estimated_delivery_date }}</span>
               </div>
             </div>
 
             <!-- Timeline Steps (Customs in Blue) -->
             <div class="timeline-container">
-              <h3 class="timeline-heading">Progreso del Envío</h3>
+              <h3 class="timeline-heading">{{ i18n.t('tracking.progress') }}</h3>
 
               <div class="timeline-steps">
                 @for (step of result.timeline; track step.step_id; let isLast = $last) {
@@ -158,7 +172,7 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
                         <h4 class="step-name" [class.text-customs]="step.is_customs">
                           {{ step.title }}
                           @if (step.is_customs) {
-                            <span class="customs-pill">Aduana Mexicana</span>
+                            <span class="customs-pill">{{ i18n.t('tracking.customsPill') }}</span>
                           }
                         </h4>
                         @if (step.timestamp) {
@@ -166,7 +180,7 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
                         }
                       </div>
                       <p class="step-desc">{{ step.description }}</p>
-                      <span class="step-loc">📍 {{ step.location }}</span>
+                      <span class="step-loc"><kx-icon name="map-pin" [size]="14" /> {{ step.location }}</span>
                     </div>
                   </div>
                 }
@@ -181,8 +195,8 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
                 rel="noopener noreferrer"
                 class="btn btn-outline"
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#25D366" stroke-width="2.5"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
-                <span>Reportar duda de este paquete por WhatsApp</span>
+                <kx-icon name="message-circle" [size]="18" />
+                <span>{{ i18n.t('tracking.whatsapp') }}</span>
               </a>
             </div>
           </article>
@@ -191,6 +205,18 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
     </section>
   `,
   styles: [`
+    .app-banner {
+      margin-top: 1.5rem; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+      background: #fff; border: 1px solid var(--kx-border); border-radius: var(--kx-radius); padding: 1rem 1.25rem; text-align: left;
+      .icon-tile { margin: 0; }
+      .btn { display: inline-flex; gap: .375rem; }
+    }
+    .app-banner-text {
+      display: flex; align-items: center; gap: .875rem; min-width: 0;
+      strong { display: block; color: var(--kx-blue-900); }
+      span { color: var(--kx-text-secondary); font-size: .9375rem; }
+    }
+
     .tracking-page-section {
       padding: 3.5rem 1.25rem 5rem;
       background: var(--kangoo-surface-bg);
@@ -313,6 +339,7 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
 
     .result-header {
       display: flex;
+      flex-wrap: wrap;
       align-items: flex-start;
       justify-content: space-between;
       border-bottom: 1px solid var(--kangoo-border);
@@ -389,7 +416,7 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
 
     .details-summary-grid {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1rem;
       background: var(--kangoo-surface-bg);
       border-radius: var(--radius-xl);
@@ -397,7 +424,7 @@ import { StatusBadgeComponent } from '../../shared/components/badge/status-badge
       margin-bottom: 2rem;
 
       @media (min-width: 640px) {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(4, minmax(0, 1fr));
       }
     }
 
@@ -620,7 +647,7 @@ export class TrackingComponent {
 
   whatsappTrackingUrl(result: TrackingResponse): string {
     const identifier = result.tracking_number || result.reference_id;
-    const msg = `Hola Kangoo Xpress, necesito información sobre el paquete con guía/referencia ${identifier}. Destino: ${result.destination_city}.`;
-    return `https://wa.me/17135550143?text=${encodeURIComponent(msg)}`;
+    const msg = this.i18n.t('tracking.waMessage', { id: identifier, dest: result.destination_city });
+    return `https://wa.me/17076127290?text=${encodeURIComponent(msg)}`;
   }
 }

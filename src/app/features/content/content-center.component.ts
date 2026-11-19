@@ -1,3 +1,4 @@
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -18,12 +19,12 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
 @Component({
   selector: 'app-content-center',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [IconComponent, RouterLink, FormsModule],
   template: `
     <section class="content-page-section" aria-labelledby="contentHeading">
       <div class="container container-narrow">
         <!-- Content Navigation Tabs -->
-        <nav class="content-tabs-nav" role="tablist" aria-label="Secciones de información">
+        <nav class="content-tabs-nav" role="tablist" [attr.aria-label]="i18n.t('content.tabsAria')">
           <button
             type="button"
             role="tab"
@@ -32,7 +33,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
             (click)="activeTab.set('how-it-works')"
             [attr.aria-selected]="activeTab() === 'how-it-works'"
           >
-            Cómo Funciona
+            {{ i18n.t('content.tabHow') }}
           </button>
           <button
             type="button"
@@ -42,7 +43,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
             (click)="activeTab.set('allowed')"
             [attr.aria-selected]="activeTab() === 'allowed'"
           >
-            ¿Qué Puedo Enviar?
+            {{ i18n.t('content.tabAllowed') }}
           </button>
           <button
             type="button"
@@ -52,7 +53,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
             (click)="activeTab.set('times')"
             [attr.aria-selected]="activeTab() === 'times'"
           >
-            Tiempos de Entrega
+            {{ i18n.t('content.tabTimes') }}
           </button>
           <button
             type="button"
@@ -62,7 +63,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
             (click)="activeTab.set('faqs')"
             [attr.aria-selected]="activeTab() === 'faqs'"
           >
-            Preguntas Frecuentes
+            {{ i18n.t('content.tabFaq') }}
           </button>
         </nav>
 
@@ -72,11 +73,9 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
         @if (activeTab() === 'how-it-works') {
           <article class="tab-pane" role="tabpanel">
             <header class="tab-header">
-              <span class="tab-badge">Paso a Paso</span>
-              <h1 id="contentHeading" class="tab-title">Cómo Funciona el Envío Binacional</h1>
-              <p class="tab-desc">
-                Con Kangoo Xpress tus pertenencias viajan seguras desde EE. UU. hasta la puerta de tu familia en México en 4 sencillos pasos.
-              </p>
+              <span class="tab-badge">{{ i18n.t('content.howBadge') }}</span>
+              <h1 id="contentHeading" class="tab-title">{{ i18n.t('content.howTitle') }}</h1>
+              <p class="tab-desc">{{ i18n.t('content.howDesc') }}</p>
             </header>
 
             <div class="guide-timeline">
@@ -92,9 +91,9 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
             </div>
 
             <div class="cta-banner">
-              <h3>¿Listo para enviar tu caja hoy?</h3>
-              <p>Comienza calculando el costo exacto con nuestro cotizador instantáneo.</p>
-              <a routerLink="/" class="btn btn-primary btn-lg">Cotizar Mi Caja Ahora</a>
+              <h3>{{ i18n.t('content.ctaTitle') }}</h3>
+              <p>{{ i18n.t('content.ctaDesc') }}</p>
+              <a routerLink="/" fragment="cotizador" class="btn btn-primary btn-lg">{{ i18n.t('content.ctaBtn') }}</a>
             </div>
           </article>
         }
@@ -105,18 +104,17 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
         @if (activeTab() === 'allowed') {
           <article class="tab-pane" role="tabpanel">
             <header class="tab-header">
-              <span class="tab-badge">Normativa Aduanal Oficial</span>
-              <h1 class="tab-title">¿Qué Puedo Enviar a México?</h1>
-              <p class="tab-desc">
-                Consulta los artículos permitidos y las restricciones legales del Servicio de Administración Tributaria (SAT) y ANAM.
-              </p>
+              <span class="tab-badge">{{ i18n.t('content.allowedBadge') }}</span>
+              <h1 class="tab-title">{{ i18n.t('content.allowedTitle') }}</h1>
+              <p class="tab-desc">{{ i18n.t('content.allowedDesc') }}</p>
 
               <!-- Search Bar for Items -->
               <div class="items-search-box">
                 <input
                   type="text"
                   class="form-input"
-                  placeholder="Buscar artículo (ej. ropa, calzado, licuadora, medicamento, herramientas)..."
+                  [placeholder]="i18n.t('content.searchPlaceholder')"
+                  [attr.aria-label]="i18n.t('content.searchAria')"
                   [ngModel]="itemsSearch()"
                   (ngModelChange)="itemsSearch.set($event)"
                 />
@@ -131,7 +129,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
                 [class.active]="itemCategoryFilter() === 'ALLOWED'"
                 (click)="itemCategoryFilter.set('ALLOWED')"
               >
-                ✅ Artículos Permitidos ({{ filteredAllowed().length }})
+                <kx-icon name="check" [size]="16" /> {{ i18n.t('content.allowedTab', { n: filteredAllowed().length }) }}
               </button>
               <button
                 type="button"
@@ -139,7 +137,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
                 [class.active]="itemCategoryFilter() === 'PROHIBITED'"
                 (click)="itemCategoryFilter.set('PROHIBITED')"
               >
-                🚫 Artículos Prohibidos ({{ filteredProhibited().length }})
+                <kx-icon name="ban" [size]="16" /> {{ i18n.t('content.prohibitedTab', { n: filteredProhibited().length }) }}
               </button>
             </div>
 
@@ -150,10 +148,10 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
                   <div class="item-card allowed-card">
                     <div class="item-head">
                       <span class="item-cat-badge">{{ item.category }}</span>
-                      <span class="status-icon">✓</span>
+                      <span class="status-icon"><kx-icon name="check" [size]="14" /></span>
                     </div>
                     <h3 class="item-name">{{ item.name }}</h3>
-                    <p class="item-recom"><strong>Recomendación:</strong> {{ item.recommendations }}</p>
+                    <p class="item-recom"><strong>{{ i18n.t('content.recommendation') }}</strong> {{ item.recommendations }}</p>
                   </div>
                 }
               </div>
@@ -166,10 +164,10 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
                   <div class="item-card prohibited-card">
                     <div class="item-head">
                       <span class="item-hazard-badge">{{ item.hazard_type }}</span>
-                      <span class="status-icon-danger">✕</span>
+                      <span class="status-icon-danger"><kx-icon name="x" [size]="14" /></span>
                     </div>
                     <h3 class="item-name">{{ item.name }}</h3>
-                    <p class="item-warning"><strong>Advertencia:</strong> {{ item.legal_warning }}</p>
+                    <p class="item-warning"><strong>{{ i18n.t('content.warning') }}</strong> {{ item.legal_warning }}</p>
                   </div>
                 }
               </div>
@@ -183,11 +181,9 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
         @if (activeTab() === 'times') {
           <article class="tab-pane" role="tabpanel">
             <header class="tab-header">
-              <span class="tab-badge">Frecuencias y Logística</span>
-              <h1 class="tab-title">Tiempos y Frecuencia de Entrega</h1>
-              <p class="tab-desc">
-                Nuestros camiones viajan semanalmente hacia la frontera con desaduanamiento continuo y distribución local directa.
-              </p>
+              <span class="tab-badge">{{ i18n.t('content.timesBadge') }}</span>
+              <h1 class="tab-title">{{ i18n.t('content.timesTitle') }}</h1>
+              <p class="tab-desc">{{ i18n.t('content.timesDesc') }}</p>
             </header>
 
             <div class="delivery-matrix">
@@ -197,7 +193,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
                     <h2 class="region-title">{{ entry.region }}</h2>
                     <span class="days-badge">{{ entry.days_range }}</span>
                   </div>
-                  <p class="freq-text">📅 {{ entry.shipping_frequency }}</p>
+                  <p class="freq-text"><kx-icon name="calendar" [size]="14" /> {{ entry.shipping_frequency }}</p>
                   <div class="states-pills">
                     @for (st of entry.states; track st) {
                       <span class="state-pill">{{ st }}</span>
@@ -215,11 +211,9 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
         @if (activeTab() === 'faqs') {
           <article class="tab-pane" role="tabpanel">
             <header class="tab-header">
-              <span class="tab-badge">Centro de Ayuda</span>
-              <h1 class="tab-title">Preguntas Frecuentes</h1>
-              <p class="tab-desc">
-                Resolvemos todas tus dudas sobre precios, trámites aduanales, coberturas y tiempos de entrega.
-              </p>
+              <span class="tab-badge">{{ i18n.t('content.faqBadge') }}</span>
+              <h1 class="tab-title">{{ i18n.t('content.faqTitle') }}</h1>
+              <p class="tab-desc">{{ i18n.t('content.faqDesc') }}</p>
             </header>
 
             <!-- FAQ Accordions -->
@@ -462,7 +456,7 @@ export type ContentTab = 'how-it-works' | 'faqs' | 'allowed' | 'times';
 
     .items-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       gap: 1.25rem;
     }
 

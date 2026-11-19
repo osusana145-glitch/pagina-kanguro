@@ -1,3 +1,4 @@
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -14,17 +15,15 @@ import { RealMapComponent } from './components/real-map.component';
 @Component({
   selector: 'app-collection-centers',
   standalone: true,
-  imports: [FormsModule, RealMapComponent],
+  imports: [IconComponent, FormsModule, RealMapComponent],
   template: `
     <section class="centers-page-section" aria-labelledby="centersHeading">
       <div class="container">
         <!-- Section Header -->
         <div class="centers-header">
-          <span class="badge badge-neutral">Red Oficial en EE. UU.</span>
-          <h1 id="centersHeading" class="page-title">Centros de Acopio Autorizados</h1>
-          <p class="page-subtitle">
-            Lleva tus cajas empacadas o compra cajas oficiales Kangoo en cualquiera de nuestras sucursales y agencias asociadas.
-          </p>
+          <span class="badge badge-neutral">{{ i18n.t('centers.badge') }}</span>
+          <h1 id="centersHeading" class="page-title">{{ i18n.t('centers.title') }}</h1>
+          <p class="page-subtitle">{{ i18n.t('centers.subtitle') }}</p>
 
           <!-- Filter & Search Controls -->
           <div class="filters-bar">
@@ -33,21 +32,22 @@ import { RealMapComponent } from './components/real-map.component';
               <input
                 type="text"
                 class="form-input filter-input"
-                placeholder="Filtrar por ciudad, estado o código postal (ej. Houston, TX, Chicago)..."
+                [placeholder]="i18n.t('centers.filterPlaceholder')"
+                [attr.aria-label]="i18n.t('centers.filterAria')"
                 [ngModel]="filterQuery()"
                 (ngModelChange)="filterQuery.set($event)"
               />
             </div>
 
             <!-- State Quick Badges -->
-            <div class="state-chips" role="group" aria-label="Filtrar por estado">
+            <div class="state-chips" role="group" [attr.aria-label]="i18n.t('centers.stateGroup')">
               <button
                 type="button"
                 class="chip-btn"
                 [class.active]="selectedStateFilter() === 'ALL'"
                 (click)="selectedStateFilter.set('ALL')"
               >
-                Todos ({{ centers().length }})
+                {{ i18n.t('centers.all', { n: centers().length }) }}
               </button>
               @for (st of availableStates(); track st) {
                 <button
@@ -72,11 +72,11 @@ import { RealMapComponent } from './components/real-map.component';
                   <span class="city-pill">{{ center.city }}, {{ center.state }}</span>
                   <h2 class="center-name">{{ center.name }}</h2>
                 </div>
-                <div class="pin-icon" aria-hidden="true">📍</div>
+                <div class="pin-icon" aria-hidden="true"><kx-icon name="map-pin" [size]="20" /></div>
               </div>
 
               <p class="center-address">
-                <span class="street-tag-pill">🛣️ Calle: <strong>{{ getStreetName(center.full_address) }}</strong></span><br/>
+                <span class="street-tag-pill"><kx-icon name="map" [size]="14" /> {{ i18n.t('centers.street') }} <strong>{{ getStreetName(center.full_address) }}</strong></span><br/>
                 <span class="full-addr-sub">{{ center.full_address }}</span>
               </p>
 
@@ -90,7 +90,7 @@ import { RealMapComponent } from './components/real-map.component';
 
               <!-- Weekly Schedule -->
               <div class="schedule-box">
-                <span class="schedule-title">Horarios de Recepción:</span>
+                <span class="schedule-title">{{ i18n.t('centers.schedule') }}</span>
                 <ul class="schedule-list">
                   @for (sch of center.schedule; track sch.days) {
                     <li>
@@ -114,10 +114,10 @@ import { RealMapComponent } from './components/real-map.component';
                   type="button"
                   class="btn btn-primary btn-sm btn-locate"
                   (click)="viewOnMap(center, $event)"
-                  title="Ver sucursal en el mapa interactivo a nivel de calle"
+                  [title]="i18n.t('centers.viewOnMapTitle')"
                 >
                   <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon><line x1="8" y1="2" x2="8" y2="18"></line><line x1="16" y1="6" x2="16" y2="22"></line></svg>
-                  <span>Ver en Mapa</span>
+                  <span>{{ i18n.t('centers.viewOnMap') }}</span>
                 </button>
 
                 <a
@@ -127,7 +127,7 @@ import { RealMapComponent } from './components/real-map.component';
                   class="btn btn-outline btn-sm btn-maps"
                   (click)="$event.stopPropagation()"
                 >
-                  <span>Cómo Llegar</span>
+                  <span>{{ i18n.t('centers.directions') }}</span>
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
                 </a>
 
@@ -137,21 +137,21 @@ import { RealMapComponent } from './components/real-map.component';
                   rel="noopener noreferrer"
                   class="btn btn-outline btn-sm btn-streetview-card"
                   (click)="$event.stopPropagation()"
-                  title="Ver fachada y calle en Google Street View 360°"
+                  [title]="i18n.t('centers.streetViewTitle')"
                 >
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
                     <circle cx="12" cy="13" r="4"></circle>
                   </svg>
-                  <span>Ver Calle 360°</span>
+                  <span>{{ i18n.t('centers.streetView') }}</span>
                 </a>
               </div>
             </article>
           } @empty {
             <div class="empty-state">
-              <p>No se encontraron centros de acopio que coincidan con tu búsqueda.</p>
+              <p>{{ i18n.t('centers.empty') }}</p>
               <button type="button" class="btn btn-secondary btn-sm" (click)="resetFilters()">
-                Ver todos los centros
+                {{ i18n.t('centers.showAll') }}
               </button>
             </div>
           }
@@ -162,9 +162,9 @@ import { RealMapComponent } from './components/real-map.component';
         <!-- ================================================================== -->
         <div class="map-section-wrapper" id="mapSection">
           <div class="map-header-intro">
-            <span class="badge badge-primary">Geolocalización Oficial</span>
-            <h2 class="map-heading">Ubicación Visual en el Mapa Real</h2>
-            <p class="map-sub">Explora nuestra red de sucursales con mapas satelitales, calles de alta resolución y navegación GPS en tiempo real.</p>
+            <span class="badge badge-primary">{{ i18n.t('centers.mapBadge') }}</span>
+            <h2 class="map-heading">{{ i18n.t('centers.mapTitle') }}</h2>
+            <p class="map-sub">{{ i18n.t('centers.mapSub') }}</p>
           </div>
 
           @defer (on viewport) {
@@ -177,7 +177,7 @@ import { RealMapComponent } from './components/real-map.component';
             <div class="map-placeholder">
               <div class="map-skeleton">
                 <div class="skeleton-spinner"></div>
-                <span class="skeleton-text">Cargando mapa interactivo en vivo...</span>
+                <span class="skeleton-text">{{ i18n.t('centers.mapLoading') }}</span>
               </div>
             </div>
           }
@@ -273,7 +273,7 @@ import { RealMapComponent } from './components/real-map.component';
     // Dynamic Centers Grid (Adapts to 2, 3, 5, etc.)
     .centers-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
       gap: 1.75rem;
       margin-bottom: 4rem;
     }
@@ -452,13 +452,13 @@ import { RealMapComponent } from './components/real-map.component';
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      border-color: #0A2540;
-      color: #0A2540;
+      border-color: var(--kx-blue-900);
+      color: var(--kx-blue-900);
       padding: 0.55rem 0.85rem;
       font-size: 0.82rem;
 
       &:hover {
-        background: #0A2540;
+        background: var(--kx-blue-900);
         color: #FFFFFF;
       }
     }

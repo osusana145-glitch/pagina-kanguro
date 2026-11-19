@@ -22,7 +22,7 @@ import {
 })
 export class ApiService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = '/api';
+  private readonly baseUrl = '/api/v1';
 
   // 1. Catalog
   getCatalog(): Observable<CatalogResponse> {

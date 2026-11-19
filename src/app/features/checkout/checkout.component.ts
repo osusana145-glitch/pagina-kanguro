@@ -1,3 +1,4 @@
+import { IconComponent } from '../../shared/components/icon/icon.component';
 import {
   Component,
   ChangeDetectionStrategy,
@@ -18,7 +19,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [RouterLink, FormsModule],
+  imports: [IconComponent, RouterLink, FormsModule],
   template: `
     <section class="checkout-page-section" aria-labelledby="checkoutHeading">
       <div class="container container-narrow">
@@ -27,22 +28,22 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
           <div class="stepper-bar" role="progressbar" [attr.aria-valuenow]="currentStep()" aria-valuemin="1" aria-valuemax="4">
             <div class="step-indicator" [class.active]="currentStep() >= 1" [class.current]="currentStep() === 1">
               <span class="step-bubble">1</span>
-              <span class="step-label">Destinatario</span>
+              <span class="step-label">{{ i18n.t('checkout.stepRecipient') }}</span>
             </div>
             <div class="step-line" [class.filled]="currentStep() >= 2"></div>
             <div class="step-indicator" [class.active]="currentStep() >= 2" [class.current]="currentStep() === 2">
               <span class="step-bubble">2</span>
-              <span class="step-label">Dirección MX</span>
+              <span class="step-label">{{ i18n.t('checkout.stepAddress') }}</span>
             </div>
             <div class="step-line" [class.filled]="currentStep() >= 3"></div>
             <div class="step-indicator" [class.active]="currentStep() >= 3" [class.current]="currentStep() === 3">
               <span class="step-bubble">3</span>
-              <span class="step-label">Entrega en USA</span>
+              <span class="step-label">{{ i18n.t('checkout.stepDropoff') }}</span>
             </div>
             <div class="step-line" [class.filled]="currentStep() >= 4"></div>
             <div class="step-indicator" [class.active]="currentStep() >= 4" [class.current]="currentStep() === 4">
               <span class="step-bubble">4</span>
-              <span class="step-label">Pagar</span>
+              <span class="step-label">{{ i18n.t('checkout.stepPay') }}</span>
             </div>
           </div>
         }
@@ -53,30 +54,30 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
           <!-- ============================================================== -->
           @if (currentStep() === 1) {
             <div class="step-pane">
-              <h1 id="checkoutHeading" class="step-title">1. Datos del Destinatario en México</h1>
-              <p class="step-subtitle">Ingresa la persona que recibirá la caja y presentará identificación oficial.</p>
+              <h1 id="checkoutHeading" class="step-title">{{ i18n.t('checkout.s1Title') }}</h1>
+              <p class="step-subtitle">{{ i18n.t('checkout.s1Sub') }}</p>
 
               <form (ngSubmit)="goToStep(2)" class="checkout-form" #f1="ngForm">
                 <div class="form-group">
-                  <label for="recName" class="form-label">Nombre Completo (como aparece en su INE/Pasaporte) *</label>
-                  <input id="recName" type="text" class="form-input" name="recName" [(ngModel)]="recipientName" required placeholder="Ej. Rosa Elena Morales Ramírez" />
+                  <label for="recName" class="form-label">{{ i18n.t('checkout.recName') }}</label>
+                  <input id="recName" type="text" class="form-input" name="recName" [(ngModel)]="recipientName" required [placeholder]="i18n.t('checkout.recNamePh')" autocomplete="name" />
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="recPhone" class="form-label">Teléfono Móvil (WhatsApp en México) *</label>
-                    <input id="recPhone" type="tel" class="form-input" name="recPhone" [(ngModel)]="recipientPhone" required placeholder="+52 (222) 000-0000" />
+                    <label for="recPhone" class="form-label">{{ i18n.t('checkout.recPhone') }}</label>
+                    <input id="recPhone" type="tel" class="form-input" name="recPhone" [(ngModel)]="recipientPhone" required placeholder="+52 (222) 000-0000" autocomplete="tel" />
                   </div>
                   <div class="form-group">
-                    <label for="recEmail" class="form-label">Correo Electrónico para Notificaciones</label>
-                    <input id="recEmail" type="email" class="form-input" name="recEmail" [(ngModel)]="recipientEmail" placeholder="notificaciones@ejemplo.com" />
+                    <label for="recEmail" class="form-label">{{ i18n.t('checkout.recEmail') }}</label>
+                    <input id="recEmail" type="email" class="form-input" name="recEmail" [(ngModel)]="recipientEmail" [placeholder]="i18n.t('checkout.recEmailPh')" autocomplete="email" />
                   </div>
                 </div>
 
                 <div class="step-actions">
-                  <a routerLink="/" class="btn btn-ghost">Cancelar</a>
+                  <a routerLink="/" class="btn btn-ghost">{{ i18n.t('checkout.cancel') }}</a>
                   <button type="submit" class="btn btn-primary btn-lg" [disabled]="!f1.valid">
-                    <span>Continuar a Dirección ➔</span>
+                    <span>{{ i18n.t('checkout.toAddress') }}</span><kx-icon name="arrow-right" [size]="16" />
                   </button>
                 </div>
               </form>
@@ -88,15 +89,15 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
           <!-- ============================================================== -->
           @if (currentStep() === 2) {
             <div class="step-pane">
-              <h2 class="step-title">2. Dirección de Entrega en México</h2>
-              <p class="step-subtitle">Entrega garantizada hasta la puerta del domicilio.</p>
+              <h2 class="step-title">{{ i18n.t('checkout.s2Title') }}</h2>
+              <p class="step-subtitle">{{ i18n.t('checkout.s2Sub') }}</p>
 
               <form (ngSubmit)="goToStep(3)" class="checkout-form" #f2="ngForm">
                 <div class="form-row">
                   <div class="form-group">
                     <label for="cpMx" class="form-label">
-                      <span>Código Postal (5 dígitos) *</span>
-                      @if (isLookingUpCp()) { <span class="hint">Consultando cobertura...</span> }
+                      <span>{{ i18n.t('checkout.cp') }}</span>
+                      @if (isLookingUpCp()) { <span class="hint">{{ i18n.t('checkout.cpChecking') }}</span> }
                     </label>
                     <input
                       id="cpMx"
@@ -107,37 +108,38 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                       [(ngModel)]="destinationCp"
                       (ngModelChange)="onCpLookup($event)"
                       required
-                      placeholder="Ej. 72000"
+                      inputmode="numeric"
+                      [placeholder]="i18n.t('checkout.cpPh')"
                     />
                   </div>
 
                   <div class="form-group">
-                    <label for="stateMx" class="form-label">Estado *</label>
-                    <input id="stateMx" type="text" class="form-input" name="stateMx" [(ngModel)]="destinationState" required placeholder="Estado" />
+                    <label for="stateMx" class="form-label">{{ i18n.t('checkout.state') }}</label>
+                    <input id="stateMx" type="text" class="form-input" name="stateMx" [(ngModel)]="destinationState" required [placeholder]="i18n.t('checkout.statePh')" />
                   </div>
                 </div>
 
                 @if (cpLookup(); as cpInfo) {
                   <div class="coverage-alert">
-                    <span>✓ Cobertura directa confirmada en <strong>{{ cpInfo.municipality }}, {{ cpInfo.state_name }}</strong>.</span>
+                    <span><kx-icon name="check" [size]="16" /> {{ i18n.t('checkout.coverage') }} <strong>{{ cpInfo.municipality }}, {{ cpInfo.state_name }}</strong>.</span>
                   </div>
                 }
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="streetMx" class="form-label">Calle *</label>
-                    <input id="streetMx" type="text" class="form-input" name="streetMx" [(ngModel)]="street" required placeholder="Calle o Avenida" />
+                    <label for="streetMx" class="form-label">{{ i18n.t('checkout.street') }}</label>
+                    <input id="streetMx" type="text" class="form-input" name="streetMx" [(ngModel)]="street" required [placeholder]="i18n.t('checkout.streetPh')" />
                   </div>
                   <div class="form-group">
-                    <label for="extMx" class="form-label">No. Exterior *</label>
-                    <input id="extMx" type="text" class="form-input" name="extMx" [(ngModel)]="extNumber" required placeholder="Ej. 415" />
+                    <label for="extMx" class="form-label">{{ i18n.t('checkout.extNumber') }}</label>
+                    <input id="extMx" type="text" class="form-input" name="extMx" [(ngModel)]="extNumber" required [placeholder]="i18n.t('checkout.extNumberPh')" />
                   </div>
                 </div>
 
                 <div class="form-row">
                   <div class="form-group">
-                    <label for="coloniaMx" class="form-label">Colonia *</label>
-                    <input id="coloniaMx" type="text" class="form-input" name="coloniaMx" [(ngModel)]="colonia" list="coloniasList" required placeholder="Colonia o Fraccionamiento" />
+                    <label for="coloniaMx" class="form-label">{{ i18n.t('checkout.colonia') }}</label>
+                    <input id="coloniaMx" type="text" class="form-input" name="coloniaMx" [(ngModel)]="colonia" list="coloniasList" required [placeholder]="i18n.t('checkout.coloniaPh')" />
                     @if (cpLookup()?.settlements?.length) {
                       <datalist id="coloniasList">
                         @for (col of cpLookup()!.settlements; track col) {
@@ -147,20 +149,20 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                     }
                   </div>
                   <div class="form-group">
-                    <label for="muniMx" class="form-label">Municipio / Alcaldía *</label>
-                    <input id="muniMx" type="text" class="form-input" name="muniMx" [(ngModel)]="municipality" required placeholder="Municipio" />
+                    <label for="muniMx" class="form-label">{{ i18n.t('checkout.municipality') }}</label>
+                    <input id="muniMx" type="text" class="form-input" name="muniMx" [(ngModel)]="municipality" required [placeholder]="i18n.t('checkout.municipalityPh')" />
                   </div>
                 </div>
 
                 <div class="form-group">
-                  <label for="refMx" class="form-label">Referencias del Domicilio (Cruces, color de zaguán, fachada)</label>
-                  <textarea id="refMx" class="form-textarea" rows="2" name="refMx" [(ngModel)]="references" placeholder="Ej. Casa de dos pisos blanca con portón café, frente al parque..."></textarea>
+                  <label for="refMx" class="form-label">{{ i18n.t('checkout.references') }}</label>
+                  <textarea id="refMx" class="form-textarea" rows="2" name="refMx" [(ngModel)]="references" [placeholder]="i18n.t('checkout.referencesPh')"></textarea>
                 </div>
 
                 <div class="step-actions">
-                  <button type="button" class="btn btn-outline" (click)="goToStep(1)">⬅ Volver</button>
+                  <button type="button" class="btn btn-outline" (click)="goToStep(1)"><kx-icon name="arrow-right" [size]="16" class="flip" /><span>{{ i18n.t('checkout.back') }}</span></button>
                   <button type="submit" class="btn btn-primary btn-lg" [disabled]="!f2.valid">
-                    <span>Continuar a Forma de Entrega ➔</span>
+                    <span>{{ i18n.t('checkout.toDropoff') }}</span><kx-icon name="arrow-right" [size]="16" />
                   </button>
                 </div>
               </form>
@@ -172,8 +174,8 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
           <!-- ============================================================== -->
           @if (currentStep() === 3) {
             <div class="step-pane">
-              <h2 class="step-title">3. ¿Cómo Entregarás la Caja en EE. UU.?</h2>
-              <p class="step-subtitle">Elige entre llevarla a un centro de acopio o solicitar recolección a domicilio.</p>
+              <h2 class="step-title">{{ i18n.t('checkout.s3Title') }}</h2>
+              <p class="step-subtitle">{{ i18n.t('checkout.s3Sub') }}</p>
 
               <div class="fulfillment-selector">
                 <label class="fulfillment-card" [class.selected]="fulfillmentType === 'dropoff_center'">
@@ -184,10 +186,10 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                     [(ngModel)]="fulfillmentType"
                     class="sr-only"
                   />
-                  <div class="f-icon">🏢</div>
+                  <div class="f-icon"><kx-icon name="building" [size]="22" /></div>
                   <div class="f-text">
-                    <h3 class="f-title">Entrega en Centro de Acopio Autorizado (Sin costo extra)</h3>
-                    <p class="f-desc">Lleva tu caja personalmente a cualquiera de nuestras sucursales en Houston, Dallas, Chicago, LA o Atlanta.</p>
+                    <h3 class="f-title">{{ i18n.t('checkout.dropoffTitle') }}</h3>
+                    <p class="f-desc">{{ i18n.t('checkout.dropoffDesc') }} <a routerLink="/centros-de-acopio" target="_blank" class="inline-link">{{ i18n.t('checkout.dropoffLink') }}</a></p>
                   </div>
                 </label>
 
@@ -199,31 +201,31 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                     [(ngModel)]="fulfillmentType"
                     class="sr-only"
                   />
-                  <div class="f-icon">🚚</div>
+                  <div class="f-icon"><kx-icon name="truck" [size]="22" /></div>
                   <div class="f-text">
-                    <h3 class="f-title">Recolección a Domicilio en EE. UU. (+$20 USD)</h3>
-                    <p class="f-desc">Un chofer recolector pasa por tu casa con báscula oficial y emplaye.</p>
+                    <h3 class="f-title">{{ i18n.t('checkout.pickupTitle') }}</h3>
+                    <p class="f-desc">{{ i18n.t('checkout.pickupDesc') }}</p>
                   </div>
                 </label>
               </div>
 
               @if (fulfillmentType === 'home_pickup') {
                 <div class="pickup-address-box">
-                  <label for="pickupAddr" class="form-label">Dirección de Recolección en EE. UU. *</label>
+                  <label for="pickupAddr" class="form-label">{{ i18n.t('checkout.pickupAddr') }}</label>
                   <input
                     id="pickupAddr"
                     type="text"
                     class="form-input"
                     [(ngModel)]="pickupAddressUs"
-                    placeholder="Calle, número, ciudad y código postal en EE. UU."
+                    [placeholder]="i18n.t('checkout.pickupAddrPh')" autocomplete="street-address"
                   />
                 </div>
               }
 
               <div class="step-actions">
-                <button type="button" class="btn btn-outline" (click)="goToStep(2)">⬅ Volver</button>
+                <button type="button" class="btn btn-outline" (click)="goToStep(2)"><kx-icon name="arrow-right" [size]="16" class="flip" /><span>{{ i18n.t('checkout.back') }}</span></button>
                 <button type="button" class="btn btn-primary btn-lg" (click)="goToStep(4)">
-                  <span>Revisar y Pagar ➔</span>
+                  <span>{{ i18n.t('checkout.toReview') }}</span><kx-icon name="arrow-right" [size]="16" />
                 </button>
               </div>
             </div>
@@ -234,32 +236,32 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
           <!-- ============================================================== -->
           @if (currentStep() === 4) {
             <div class="step-pane">
-              <h2 class="step-title">4. Revisar y Completar Pago</h2>
-              <p class="step-subtitle">Verifica el resumen oficial garantizado antes de liquidar tu orden.</p>
+              <h2 class="step-title">{{ i18n.t('checkout.s4Title') }}</h2>
+              <p class="step-subtitle">{{ i18n.t('checkout.s4Sub') }}</p>
 
               <!-- Order Summary from Quoter / Storage -->
               @if (persistedQuote(); as pQuote) {
                 <div class="summary-receipt-card">
                   <div class="receipt-header">
-                    <span class="receipt-box-name">📦 {{ pQuote.box_name }}</span>
-                    <span class="receipt-badge">Cotización Oficial</span>
+                    <span class="receipt-box-name"><kx-icon name="package" [size]="14" /> {{ pQuote.box_name }}</span>
+                    <span class="receipt-badge">{{ i18n.t('checkout.officialQuote') }}</span>
                   </div>
 
                   <div class="receipt-breakdown">
                     <div class="r-line">
-                      <span>Envío Base Internacional:</span>
+                      <span>{{ i18n.t('checkout.base') }}</span>
                       <strong>{{ pQuote.quote.breakdown.base_shipping_formatted }}</strong>
                     </div>
                     <div class="r-line">
-                      <span>Despacho Aduanal SAT / ANAM:</span>
+                      <span>{{ i18n.t('checkout.customs') }}</span>
                       <strong>{{ pQuote.quote.breakdown.customs_tax_formatted }}</strong>
                     </div>
                     <div class="r-line">
-                      <span>Póliza de Protección:</span>
+                      <span>{{ i18n.t('checkout.insurance') }}</span>
                       <strong>{{ pQuote.quote.breakdown.insurance_formatted }}</strong>
                     </div>
                     <div class="r-total-line">
-                      <span>Total Final Garantizado:</span>
+                      <span>{{ i18n.t('checkout.total') }}</span>
                       <!-- STRICT RULE: Display API formatted only -->
                       <span class="r-total-val">{{ pQuote.quote.total_formatted }}</span>
                     </div>
@@ -269,7 +271,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
 
               <!-- Payment Method Selection -->
               <div class="payment-methods-selector">
-                <h3 class="pm-heading">Selecciona Método de Pago</h3>
+                <h3 class="pm-heading">{{ i18n.t('checkout.pmHeading') }}</h3>
 
                 <div class="pm-tabs">
                   <button
@@ -278,7 +280,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                     [class.active]="selectedPaymentMethod === 'stripe'"
                     (click)="selectedPaymentMethod = 'stripe'"
                   >
-                    💳 Tarjeta (Stripe)
+                    <kx-icon name="credit-card" [size]="16" /> {{ i18n.t('checkout.pmCard') }}
                   </button>
                   <button
                     type="button"
@@ -286,7 +288,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                     [class.active]="selectedPaymentMethod === 'paypal'"
                     (click)="selectedPaymentMethod = 'paypal'"
                   >
-                    🅿️ PayPal
+                    <kx-icon name="wallet" [size]="16" /> PayPal
                   </button>
                   <button
                     type="button"
@@ -294,7 +296,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                     [class.active]="selectedPaymentMethod === 'cash'"
                     (click)="selectedPaymentMethod = 'cash'"
                   >
-                    💵 Pago en Efectivo (OXXO / Afiliados)
+                    <kx-icon name="banknote" [size]="16" /> {{ i18n.t('checkout.pmCash') }}
                   </button>
                 </div>
 
@@ -302,22 +304,22 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                 @if (selectedPaymentMethod === 'stripe') {
                   <div class="stripe-element-container">
                     <div class="stripe-security-banner">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#10B981" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
-                      <span>Transacción encriptada con tecnología Stripe 256-bit SSL</span>
+                      <kx-icon name="shield-check" [size]="16" />
+                      <span>{{ i18n.t('checkout.stripeSecure') }}</span>
                     </div>
 
                     <div class="form-group">
-                      <label for="cardNumber" class="form-label">Número de Tarjeta</label>
+                      <label for="cardNumber" class="form-label">{{ i18n.t('checkout.cardNumber') }}</label>
                       <input id="cardNumber" type="text" class="form-input" placeholder="4242 •••• •••• 4242" />
                     </div>
 
                     <div class="form-row">
                       <div class="form-group">
-                        <label for="cardExp" class="form-label">Fecha de Vencimiento</label>
-                        <input id="cardExp" type="text" class="form-input" placeholder="MM / AA" />
+                        <label for="cardExp" class="form-label">{{ i18n.t('checkout.cardExp') }}</label>
+                        <input id="cardExp" type="text" class="form-input" [placeholder]="i18n.t('checkout.cardExpPh')" />
                       </div>
                       <div class="form-group">
-                        <label for="cardCvc" class="form-label">Código CVC / CVV</label>
+                        <label for="cardCvc" class="form-label">{{ i18n.t('checkout.cardCvc') }}</label>
                         <input id="cardCvc" type="password" maxlength="4" class="form-input" placeholder="CVC" />
                       </div>
                     </div>
@@ -327,7 +329,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                 <!-- PayPal Button Mockup -->
                 @if (selectedPaymentMethod === 'paypal') {
                   <div class="paypal-container">
-                    <p class="paypal-desc">Serás redirigido al portal seguro de PayPal para completar tu pago con saldo o tarjeta asociada.</p>
+                    <p class="paypal-desc">{{ i18n.t('checkout.paypalDesc') }}</p>
                     <div class="paypal-btn-mock">
                       <span>PayPal Checkout</span>
                     </div>
@@ -337,10 +339,8 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                 <!-- Cash Payment Instructions -->
                 @if (selectedPaymentMethod === 'cash') {
                   <div class="cash-container">
-                    <h4 class="cash-title">Instrucciones de Pago en Efectivo</h4>
-                    <p class="cash-desc">
-                      Al confirmar tu orden, se generará una ficha con código de barras para pagar en OXXO, 7-Eleven, Farmacias del Ahorro o directamente en tu centro de acopio Kangoo.
-                    </p>
+                    <h4 class="cash-title">{{ i18n.t('checkout.cashTitle') }}</h4>
+                    <p class="cash-desc">{{ i18n.t('checkout.cashDesc') }}</p>
                     <div class="cash-barcode-box">
                       <span class="barcode-lines">||||| | |||| ||| |||||| | ||||</span>
                       <span class="barcode-num">9384-0192-8472-0192</span>
@@ -350,7 +350,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
               </div>
 
               <div class="step-actions">
-                <button type="button" class="btn btn-outline" (click)="goToStep(3)">⬅ Volver</button>
+                <button type="button" class="btn btn-outline" (click)="goToStep(3)"><kx-icon name="arrow-right" [size]="16" class="flip" /><span>{{ i18n.t('checkout.back') }}</span></button>
                 <button
                   type="button"
                   class="btn btn-primary btn-lg"
@@ -358,9 +358,9 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
                   [disabled]="isProcessingPayment()"
                 >
                   @if (isProcessingPayment()) {
-                    <span>Acreditando pago seguro...</span>
+                    <span>{{ i18n.t('checkout.processing') }}</span>
                   } @else {
-                    <span>Confirmar y Pagar Ahora</span>
+                    <span>{{ i18n.t('checkout.payNow') }}</span>
                   }
                 </button>
               </div>
@@ -372,33 +372,37 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
           <!-- ============================================================== -->
           @if (currentStep() === 5) {
             <div class="confirmation-pane">
-              <div class="conf-badge-icon">✓</div>
-              <h1 class="conf-title">¡Envío Registrado y Pago Acreditado!</h1>
+              <div class="conf-badge-icon"><kx-icon name="check" [size]="28" /></div>
+              <h1 class="conf-title">{{ i18n.t('checkout.doneTitle') }}</h1>
               <p class="conf-sub">
-                Hemos enviado la confirmación formal al correo <strong>{{ recipientEmail || 'cliente@kangoo-xpress.com' }}</strong>.
+                @if (recipientEmail) {
+                  {{ i18n.t('checkout.doneSub') }} <strong>{{ recipientEmail }}</strong>.
+                } @else {
+                  {{ i18n.t('checkout.doneSubNoEmail') }}
+                }
               </p>
 
               <div class="guide-assigned-box">
-                <span class="assigned-label">Número Oficial de Guía Satelital</span>
+                <span class="assigned-label">{{ i18n.t('checkout.guideLabel') }}</span>
                 <span class="assigned-number">{{ assignedGuide() }}</span>
-                <span class="assigned-ref">Referencia interna: {{ assignedRef() }}</span>
+                <span class="assigned-ref">{{ i18n.t('checkout.refLabel') }} {{ assignedRef() }}</span>
               </div>
 
               <div class="next-steps-card">
-                <h3 class="next-steps-title">¿Qué sigue ahora?</h3>
+                <h3 class="next-steps-title">{{ i18n.t('checkout.nextTitle') }}</h3>
                 <ul class="next-steps-list">
-                  <li>Lleva tu caja a tu centro de acopio Kangoo preferido con tu número de guía <strong>{{ assignedGuide() }}</strong>.</li>
-                  <li>Puedes rastrear el trayecto en vivo en cualquier momento desde nuestra web.</li>
-                  <li>Recibirás notificaciones por WhatsApp cuando la caja pase la aduana en Laredo.</li>
+                  <li>{{ i18n.t('checkout.next1') }} <strong>{{ assignedGuide() }}</strong>.</li>
+                  <li>{{ i18n.t('checkout.next2') }}</li>
+                  <li>{{ i18n.t('checkout.next3') }}</li>
                 </ul>
               </div>
 
               <div class="conf-actions">
                 <a [routerLink]="['/rastrear', assignedGuide()]" class="btn btn-primary btn-lg">
-                  Rastrear mi Paquete en Vivo ➔
+                  {{ i18n.t('checkout.trackBtn') }} <kx-icon name="arrow-right" [size]="16" />
                 </a>
                 <a routerLink="/" class="btn btn-outline btn-lg">
-                  Volver al Inicio
+                  {{ i18n.t('checkout.homeBtn') }}
                 </a>
               </div>
             </div>
@@ -408,6 +412,9 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
     </section>
   `,
   styles: [`
+    .flip { transform: scaleX(-1); }
+    .inline-link { color: var(--kx-blue-600); text-decoration: underline; text-underline-offset: 2px; font-weight: 600; }
+
     .checkout-page-section {
       padding: 3.5rem 1.25rem 5rem;
       background: var(--kangoo-surface-bg);
@@ -507,11 +514,11 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
 
     .form-row {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 1rem;
 
       @media (min-width: 640px) {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       }
     }
 
@@ -765,7 +772,7 @@ export type CheckoutStep = 1 | 2 | 3 | 4 | 5; // 5 is confirmation success
       font-size: 1.8rem;
       letter-spacing: 0.15em;
       display: block;
-      color: #0A2540;
+      color: var(--kx-blue-900);
     }
 
     .barcode-num {
@@ -896,10 +903,10 @@ export class CheckoutComponent {
   // Step 2: Address in Mexico
   destinationCp = '72000';
   destinationState = 'Puebla';
-  street = 'Calle 5 Poniente';
-  extNumber = '314';
-  colonia = 'Centro Histórico';
-  municipality = 'Puebla';
+  street = '';
+  extNumber = '';
+  colonia = '';
+  municipality = '';
   references = '';
   readonly isLookingUpCp = signal<boolean>(false);
   readonly cpLookup = signal<PostalCodeLookup | null>(null);
@@ -927,6 +934,8 @@ export class CheckoutComponent {
         this.destinationState = saved.request.destination_state;
       }
     }
+    // Pre-fill municipality/colonia from the postal code chosen in the quoter.
+    this.onCpLookup(this.destinationCp);
   }
 
   goToStep(step: CheckoutStep): void {

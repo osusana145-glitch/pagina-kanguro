@@ -1,3 +1,4 @@
+import { I18nService } from '../../../core/services/i18n.service';
 import { Component, ChangeDetectionStrategy, inject, computed } from '@angular/core';
 import { Router, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
@@ -7,13 +8,13 @@ import { filter, map } from 'rxjs';
   selector: 'app-whatsapp-button',
   standalone: true,
   template: `
-    <aside class="whatsapp-float-container" aria-label="Atención por WhatsApp">
+    <aside class="whatsapp-float-container" [attr.aria-label]="i18n.t('wa.regionAria')">
       <a
         [href]="whatsappUrl()"
         target="_blank"
         rel="noopener noreferrer"
         class="whatsapp-btn"
-        aria-label="Contactar a Kangoo Xpress por WhatsApp"
+        [attr.aria-label]="i18n.t('wa.linkAria')"
       >
         <span class="tooltip-bubble">{{ tooltipText() }}</span>
         <div class="whatsapp-circle">
@@ -95,6 +96,7 @@ import { filter, map } from 'rxjs';
 })
 export class WhatsappButtonComponent {
   private readonly router = inject(Router);
+  readonly i18n = inject(I18nService);
 
   private readonly currentUrl = toSignal(
     this.router.events.pipe(
@@ -106,27 +108,27 @@ export class WhatsappButtonComponent {
 
   readonly tooltipText = computed(() => {
     const url = this.currentUrl() || '';
-    if (url.includes('rastrear')) return '¿Dudas con tu rastreo? Chatea aquí';
-    if (url.includes('enviar') || url.includes('checkout')) return 'Asesoría para tu envío';
-    if (url.includes('pedido-especial')) return 'Cotiza carga pesada por WhatsApp';
-    return '¿Ayuda con tus envíos a México?';
+    if (url.includes('rastrear')) return this.i18n.t('wa.tipTracking');
+    if (url.includes('enviar') || url.includes('checkout')) return this.i18n.t('wa.tipCheckout');
+    if (url.includes('pedido-especial')) return this.i18n.t('wa.tipSpecial');
+    return this.i18n.t('wa.tipDefault');
   });
 
   readonly whatsappUrl = computed(() => {
     const url = this.currentUrl() || '';
-    let message = 'Hola Kangoo Xpress, me gustaría recibir información sobre sus envíos de EE. UU. a México.';
+    let message = this.i18n.t('wa.msgDefault');
     
     if (url.includes('rastrear')) {
-      message = 'Hola Kangoo Xpress, necesito ayuda con el estatus de rastreo de mi paquete.';
+      message = this.i18n.t('wa.msgTracking');
     } else if (url.includes('enviar')) {
-      message = 'Hola Kangoo Xpress, tengo una duda durante el proceso de envío y cotización.';
+      message = this.i18n.t('wa.msgCheckout');
     } else if (url.includes('pedido-especial')) {
-      message = 'Hola Kangoo Xpress, me gustaría cotizar una carga especial o de volumen extraordinario.';
+      message = this.i18n.t('wa.msgSpecial');
     } else if (url.includes('centros-de-acopio')) {
-      message = 'Hola Kangoo Xpress, quisiera información sobre el centro de acopio más cercano para entregar mi caja.';
+      message = this.i18n.t('wa.msgCenters');
     }
 
-    const phoneNumber = '17135550143'; // Official WhatsApp business number
+    const phoneNumber = '17076127290'; // Official WhatsApp from kangoo-xpress.com
     return `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
   });
 }

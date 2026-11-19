@@ -21,6 +21,7 @@ export interface BoxOption {
   subtitle: string;
   dimensions: BoxDimensions;
   max_weight_lb: number;
+  price_formatted?: string;
   popular?: boolean;
   recommended_for: string;
   badge?: string;
@@ -32,6 +33,7 @@ export interface InsurancePlan {
   name: string;
   coverage_amount_usd: number;
   coverage_formatted: string;
+  price_formatted?: string;
   description: string;
   recommended?: boolean;
 }
@@ -45,11 +47,16 @@ export interface ExtraItem {
   unit_name: string;
 }
 
-export interface SocialProofStats {
-  rating: number;
-  reviews_count: number;
-  boxes_delivered_formatted: string;
-  on_time_percentage: number;
+/** Verified social-proof figures. Every field is optional: the UI only renders what the API returns. */
+export interface SiteStats {
+  delivered_boxes?: number;
+  rating?: number;
+  reviews_count?: number;
+}
+
+export interface MobileAppLinks {
+  ios_url?: string;
+  android_url?: string;
 }
 
 export interface CustomerReview {
@@ -67,8 +74,6 @@ export interface CatalogResponse {
   boxes: BoxOption[];
   insurance_plans: InsurancePlan[];
   extra_items: ExtraItem[];
-  stats: SocialProofStats;
-  reviews: CustomerReview[];
 }
 
 export interface PostalCodeLookup {
@@ -242,6 +247,9 @@ export interface SiteContentResponse {
   allowed_items: AllowedItem[];
   prohibited_items: ProhibitedItem[];
   delivery_times: DeliveryEstimate[];
+  reviews?: CustomerReview[];
+  stats?: SiteStats;
+  mobile_app?: MobileAppLinks;
 }
 
 // ==============================================================================
