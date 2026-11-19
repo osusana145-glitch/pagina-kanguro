@@ -30,7 +30,12 @@
               }
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              {
+                "input": "node_modules/leaflet/dist/leaflet.css",
+                "bundleName": "leaflet",
+                "inject": false
+              }
             ],
             "allowedCommonJsDependencies": [
               "leaflet"
@@ -38,7 +43,16 @@
             "server": "src/main.server.ts",
             "outputMode": "server",
             "security": {
-              "allowedHosts": ["localhost", "127.0.0.1", "192.168.100.68"]
+              "allowedHosts": [
+                "localhost",
+                "127.0.0.1",
+                "192.168.100.68"
+              ]
+            },
+            "optimization": {
+              "fonts": {
+                "inline": false
+              }
             },
             "ssr": {
               "entry": "src/server.ts"
@@ -46,6 +60,16 @@
           },
           "configurations": {
             "production": {
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": {
+                  "inline": false
+                }
+              },
               "budgets": [
                 {
                   "type": "initial",

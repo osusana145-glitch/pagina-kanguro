@@ -1,3 +1,5 @@
+import { MEXICAN_STATES_LIST } from '../../../core/services/mexican-postal-codes';
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
@@ -6,33 +8,29 @@ import { I18nService } from '../../../core/services/i18n.service';
 @Component({
   selector: 'app-special-order',
   standalone: true,
-  imports: [FormsModule],
+  imports: [IconComponent, FormsModule],
   template: `
     <section class="form-page-section" aria-labelledby="formTitle">
       <div class="container container-narrow">
         <div class="form-container-card">
           <header class="form-header">
-            <span class="badge badge-neutral">Cargas Extraordinarias</span>
-            <h1 id="formTitle" class="form-title">Cotización de Pedido Especial</h1>
-            <p class="form-desc">
-              ¿Deseas enviar tarimas completas, maquinaria pesada, herramientas industriales o mudanzas? Llena este formulario y nuestro equipo de logística aduanal te enviará una propuesta formal en menos de 24 horas.
-            </p>
+            <span class="badge badge-neutral">{{ i18n.t('special.badge') }}</span>
+            <h1 id="formTitle" class="form-title">{{ i18n.t('special.title') }}</h1>
+            <p class="form-desc">{{ i18n.t('special.desc') }}</p>
           </header>
 
           @if (isSuccess()) {
             <div class="success-alert" role="status">
-              <div class="success-icon">✓</div>
-              <h2 class="success-title">¡Solicitud de Carga Recibida!</h2>
-              <p class="success-desc">
-                Hemos asignado el folio <strong>#ESP-{{ folio() }}</strong> a tu solicitud. Un asesor especializado en logística aduanal revisará tus fotografías y te contactará por teléfono y correo.
-              </p>
-              <button type="button" class="btn btn-secondary" (click)="resetForm()">Enviar otra solicitud</button>
+              <div class="success-icon"><kx-icon name="check" [size]="28" /></div>
+              <h2 class="success-title">{{ i18n.t('special.successTitle') }}</h2>
+              <p class="success-desc">{{ i18n.t('special.successDesc', { folio: folio() }) }}</p>
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">{{ i18n.t('forms.sendAnother') }}</button>
             </div>
           } @else {
             <form (ngSubmit)="onSubmit()" class="special-form" #f="ngForm" novalidate>
               <!-- ANTI-SPAM HONEYPOT FIELD (Hidden from real users) -->
               <div class="form-honeypot" aria-hidden="true">
-                <label for="honeypotWebsite">No llenar si eres humano</label>
+                <label for="honeypotWebsite">{{ i18n.t('special.honeypot') }}</label>
                 <input
                   id="honeypotWebsite"
                   type="text"
@@ -46,7 +44,7 @@ import { I18nService } from '../../../core/services/i18n.service';
               <!-- Full Name & Email -->
               <div class="form-row">
                 <div class="form-group">
-                  <label for="fullName" class="form-label">Nombre Completo *</label>
+                  <label for="fullName" class="form-label">{{ i18n.t('forms.fullName') }}</label>
                   <input
                     id="fullName"
                     type="text"
@@ -54,12 +52,13 @@ import { I18nService } from '../../../core/services/i18n.service';
                     name="fullName"
                     [(ngModel)]="fullName"
                     required
-                    placeholder="Ej. Roberto Morales"
+                    [placeholder]="i18n.t('special.namePh')"
+                    autocomplete="name"
                   />
                 </div>
 
                 <div class="form-group">
-                  <label for="email" class="form-label">Correo Electrónico *</label>
+                  <label for="email" class="form-label">{{ i18n.t('forms.email') }}</label>
                   <input
                     id="email"
                     type="email"
@@ -67,7 +66,8 @@ import { I18nService } from '../../../core/services/i18n.service';
                     name="email"
                     [(ngModel)]="email"
                     required
-                    placeholder="tucorreo@ejemplo.com"
+                    [placeholder]="i18n.t('forms.emailPh')"
+                    autocomplete="email"
                   />
                 </div>
               </div>
@@ -75,7 +75,7 @@ import { I18nService } from '../../../core/services/i18n.service';
               <!-- Phone & Origin City -->
               <div class="form-row">
                 <div class="form-group">
-                  <label for="phone" class="form-label">Teléfono / WhatsApp en EE. UU. *</label>
+                  <label for="phone" class="form-label">{{ i18n.t('special.phone') }}</label>
                   <input
                     id="phone"
                     type="tel"
@@ -83,12 +83,12 @@ import { I18nService } from '../../../core/services/i18n.service';
                     name="phone"
                     [(ngModel)]="phone"
                     required
-                    placeholder="+1 (713) 000-0000"
+                    placeholder="+1 (707) 000-0000"
                   />
                 </div>
 
                 <div class="form-group">
-                  <label for="originCity" class="form-label">Ciudad y Estado de Origen (USA) *</label>
+                  <label for="originCity" class="form-label">{{ i18n.t('special.origin') }}</label>
                   <input
                     id="originCity"
                     type="text"
@@ -96,14 +96,14 @@ import { I18nService } from '../../../core/services/i18n.service';
                     name="originCity"
                     [(ngModel)]="originCity"
                     required
-                    placeholder="Ej. Houston, TX"
+                    [placeholder]="i18n.t('special.originPh')"
                   />
                 </div>
               </div>
 
               <!-- Destination State in Mexico -->
               <div class="form-group">
-                <label for="destState" class="form-label">Estado de Destino en México *</label>
+                <label for="destState" class="form-label">{{ i18n.t('special.dest') }}</label>
                 <select
                   id="destState"
                   class="form-select"
@@ -111,28 +111,18 @@ import { I18nService } from '../../../core/services/i18n.service';
                   [(ngModel)]="destState"
                   required
                 >
-                  <option value="" disabled selected>Selecciona el estado destino...</option>
-                  <option value="Puebla">Puebla</option>
-                  <option value="Jalisco">Jalisco</option>
-                  <option value="Michoacán">Michoacán</option>
-                  <option value="Ciudad de México">Ciudad de México</option>
-                  <option value="Nuevo León">Nuevo León</option>
-                  <option value="Guanajuato">Guanajuato</option>
-                  <option value="Estado de México">Estado de México</option>
-                  <option value="Veracruz">Veracruz</option>
-                  <option value="Guerrero">Guerrero</option>
-                  <option value="Oaxaca">Oaxaca</option>
-                  <option value="San Luis Potosí">San Luis Potosí</option>
-                  <option value="Zacatecas">Zacatecas</option>
-                  <option value="Otro Estado">Otro Estado</option>
+                  <option value="" disabled selected>{{ i18n.t('special.destPh') }}</option>
+                  @for (st of mexicanStates; track st) {
+                    <option [value]="st">{{ st }}</option>
+                  }
                 </select>
               </div>
 
               <!-- Item Description -->
               <div class="form-group">
                 <label for="itemDescription" class="form-label">
-                  <span>Descripción Detallada de la Mercancía *</span>
-                  <span class="hint">Dimensiones aprox., contenido y peso</span>
+                  <span>{{ i18n.t('special.item') }}</span>
+                  <span class="hint">{{ i18n.t('special.itemHint') }}</span>
                 </label>
                 <textarea
                   id="itemDescription"
@@ -141,17 +131,17 @@ import { I18nService } from '../../../core/services/i18n.service';
                   name="itemDescription"
                   [(ngModel)]="itemDescription"
                   required
-                  placeholder="Ej. 2 tarimas de refacciones automotrices empacadas y 1 torno mecánico seminuevo. Peso aproximado 800 lb..."
+                  [placeholder]="i18n.t('special.itemPh')"
                 ></textarea>
               </div>
 
               <!-- Multipart Photos Upload with Preview -->
               <div class="form-group">
                 <label class="form-label">
-                  <span>Fotografías de la Mercancía</span>
-                  <span class="hint">Opcional pero muy recomendado para aduanas</span>
+                  <span>{{ i18n.t('special.photos') }}</span>
+                  <span class="hint">{{ i18n.t('special.photosHint') }}</span>
                 </label>
-                <div class="file-dropzone" (click)="fileInput.click()">
+                <div class="file-dropzone" role="button" tabindex="0" (click)="fileInput.click()" (keydown.enter)="fileInput.click()" (keydown.space)="$event.preventDefault(); fileInput.click()">
                   <input
                     #fileInput
                     type="file"
@@ -162,15 +152,15 @@ import { I18nService } from '../../../core/services/i18n.service';
                   />
                   <div class="dropzone-content">
                     <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="upload-icon"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
-                    <span class="dropzone-title">Haz clic aquí para subir fotos</span>
-                    <span class="dropzone-sub">Archivos JPG o PNG (Hasta 5 imágenes)</span>
+                    <span class="dropzone-title">{{ i18n.t('special.dropTitle') }}</span>
+                    <span class="dropzone-sub">{{ i18n.t('special.dropSub') }}</span>
                   </div>
                 </div>
 
                 @if (selectedFileNames().length > 0) {
                   <div class="files-preview-list">
                     @for (name of selectedFileNames(); track name) {
-                      <span class="file-chip">📷 {{ name }}</span>
+                      <span class="file-chip"><kx-icon name="camera" [size]="14" /> {{ name }}</span>
                     }
                   </div>
                 }
@@ -184,9 +174,9 @@ import { I18nService } from '../../../core/services/i18n.service';
               >
                 @if (isSubmitting()) {
                   <span class="btn-spinner"></span>
-                  <span>Procesando solicitud...</span>
+                  <span>{{ i18n.t('special.processing') }}</span>
                 } @else {
-                  <span>Solicitar Cotización de Carga Especial</span>
+                  <span>{{ i18n.t('special.submit') }}</span>
                 }
               </button>
             </form>
@@ -235,11 +225,11 @@ import { I18nService } from '../../../core/services/i18n.service';
 
     .form-row {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 1rem;
 
       @media (min-width: 640px) {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       }
     }
 
@@ -350,6 +340,7 @@ import { I18nService } from '../../../core/services/i18n.service';
 export class SpecialOrderComponent {
   private readonly api = inject(ApiService);
   readonly i18n = inject(I18nService);
+  readonly mexicanStates = MEXICAN_STATES_LIST;
 
   // Form Fields
   honeypotValue = ''; // Must remain empty

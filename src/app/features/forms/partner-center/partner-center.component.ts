@@ -1,3 +1,4 @@
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
@@ -7,27 +8,23 @@ import { PartnerCenterPayload } from '../../../core/models/api.models';
 @Component({
   selector: 'app-partner-center',
   standalone: true,
-  imports: [FormsModule],
+  imports: [IconComponent, FormsModule],
   template: `
     <section class="form-page-section" aria-labelledby="partnerTitle">
       <div class="container container-narrow">
         <div class="form-container-card">
           <header class="form-header">
-            <span class="badge badge-success">Oportunidad de Negocio</span>
-            <h1 id="partnerTitle" class="form-title">Conviértete en Centro de Acopio Kangoo</h1>
-            <p class="form-desc">
-              Si cuentas con un local comercial, tienda de abarrotes, negocio de envíos de dinero o bodega en Estados Unidos, genera ingresos recurrentes comisionando por cada caja recibida y vendida.
-            </p>
+            <span class="badge badge-success">{{ i18n.t('partner.badge') }}</span>
+            <h1 id="partnerTitle" class="form-title">{{ i18n.t('partner.title') }}</h1>
+            <p class="form-desc">{{ i18n.t('partner.desc') }}</p>
           </header>
 
           @if (isSuccess()) {
             <div class="success-alert">
-              <div class="success-icon">✓</div>
-              <h2 class="success-title">¡Solicitud de Alianza Recibida!</h2>
-              <p class="success-desc">
-                Nuestro gerente de operaciones para la zona de <strong>{{ city }}, {{ state }}</strong> se pondrá en contacto contigo en un plazo de 24 a 48 horas hábiles.
-              </p>
-              <button type="button" class="btn btn-secondary" (click)="resetForm()">Enviar otra solicitud</button>
+              <div class="success-icon"><kx-icon name="check" [size]="28" /></div>
+              <h2 class="success-title">{{ i18n.t('partner.successTitle') }}</h2>
+              <p class="success-desc">{{ i18n.t('partner.successDesc', { city: city, state: state }) }}</p>
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">{{ i18n.t('forms.sendAnother') }}</button>
             </div>
           } @else {
             <form (ngSubmit)="onSubmit()" class="partner-form" #f="ngForm">
@@ -38,59 +35,58 @@ import { PartnerCenterPayload } from '../../../core/models/api.models';
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="bName" class="form-label">Nombre del Negocio o Tienda *</label>
-                  <input id="bName" type="text" class="form-input" name="bName" [(ngModel)]="businessName" required placeholder="Ej. Abarrotes San Juan / Envios Express" />
+                  <label for="bName" class="form-label">{{ i18n.t('partner.businessName') }}</label>
+                  <input id="bName" type="text" class="form-input" name="bName" [(ngModel)]="businessName" required [placeholder]="i18n.t('partner.businessNamePh')" autocomplete="organization" />
                 </div>
                 <div class="form-group">
-                  <label for="cName" class="form-label">Nombre del Responsable / Propietario *</label>
-                  <input id="cName" type="text" class="form-input" name="cName" [(ngModel)]="contactName" required placeholder="Ej. Juan Pérez" />
+                  <label for="cName" class="form-label">{{ i18n.t('partner.contactName') }}</label>
+                  <input id="cName" type="text" class="form-input" name="cName" [(ngModel)]="contactName" required [placeholder]="i18n.t('partner.contactNamePh')" autocomplete="name" />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="pEmail" class="form-label">Correo Electrónico *</label>
-                  <input id="pEmail" type="email" class="form-input" name="pEmail" [(ngModel)]="email" required placeholder="contacto@minegocio.com" />
+                  <label for="pEmail" class="form-label">{{ i18n.t('forms.email') }}</label>
+                  <input id="pEmail" type="email" class="form-input" name="pEmail" [(ngModel)]="email" required [placeholder]="i18n.t('partner.emailPh')" autocomplete="email" />
                 </div>
                 <div class="form-group">
-                  <label for="pPhone" class="form-label">Teléfono Directo *</label>
+                  <label for="pPhone" class="form-label">{{ i18n.t('partner.phone') }}</label>
                   <input id="pPhone" type="tel" class="form-input" name="pPhone" [(ngModel)]="phone" required placeholder="+1 (000) 000-0000" />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="pCity" class="form-label">Ciudad *</label>
-                  <input id="pCity" type="text" class="form-input" name="pCity" [(ngModel)]="city" required placeholder="Ej. Dallas" />
+                  <label for="pCity" class="form-label">{{ i18n.t('partner.city') }}</label>
+                  <input id="pCity" type="text" class="form-input" name="pCity" [(ngModel)]="city" required [placeholder]="i18n.t('partner.cityPh')" />
                 </div>
                 <div class="form-group">
-                  <label for="pState" class="form-label">Estado (USA) *</label>
+                  <label for="pState" class="form-label">{{ i18n.t('partner.state') }}</label>
                   <select id="pState" class="form-select" name="pState" [(ngModel)]="state" required>
-                    <option value="" disabled selected>Selecciona Estado...</option>
-                    <option value="TX">Texas (TX)</option>
+                    <option value="" disabled selected>{{ i18n.t('partner.statePh') }}</option>
                     <option value="CA">California (CA)</option>
+                    <option value="TX">Texas (TX)</option>
+                    <option value="NV">Nevada (NV)</option>
+                    <option value="AZ">Arizona (AZ)</option>
                     <option value="IL">Illinois (IL)</option>
-                    <option value="GA">Georgia (GA)</option>
-                    <option value="FL">Florida (FL)</option>
-                    <option value="NC">North Carolina (NC)</option>
-                    <option value="OTRO">Otro Estado</option>
+                    <option value="OTRO">{{ i18n.t('partner.stateOther') }}</option>
                   </select>
                 </div>
               </div>
 
               <div class="form-group">
                 <label for="pComments" class="form-label">
-                  <span>Comentarios Adicionales</span>
-                  <span class="hint">Horario de tu tienda, experiencia previa en envíos</span>
+                  <span>{{ i18n.t('partner.comments') }}</span>
+                  <span class="hint">{{ i18n.t('partner.commentsHint') }}</span>
                 </label>
-                <textarea id="pComments" class="form-textarea" rows="3" name="pComments" [(ngModel)]="comments" placeholder="Tenemos una tienda con afluencia diaria de 200 personas y espacio disponible..."></textarea>
+                <textarea id="pComments" class="form-textarea" rows="3" name="pComments" [(ngModel)]="comments" [placeholder]="i18n.t('partner.commentsPh')"></textarea>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg submit-btn" [disabled]="isSubmitting() || !f.valid">
                 @if (isSubmitting()) {
-                  <span>Enviando solicitud...</span>
+                  <span>{{ i18n.t('partner.sending') }}</span>
                 } @else {
-                  <span>Postular mi Negocio como Centro de Acopio</span>
+                  <span>{{ i18n.t('partner.submit') }}</span>
                 }
               </button>
             </form>
@@ -115,8 +111,8 @@ import { PartnerCenterPayload } from '../../../core/models/api.models';
     .form-header { text-align: center; margin-bottom: 2rem; }
     .form-title { font-size: 2rem; font-weight: 800; color: var(--kangoo-secondary); margin: 0.5rem 0; }
     .form-desc { font-size: 0.95rem; color: var(--kangoo-neutral-text); line-height: 1.5; }
-    .form-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-    @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
+    .form-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    @media (min-width: 640px) { .form-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
     .submit-btn { width: 100%; margin-top: 1.5rem; }
     .success-alert { text-align: center; padding: 2.5rem 1rem; }
     .success-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--kangoo-success-light); color: var(--kangoo-success-dark); font-size: 2rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }

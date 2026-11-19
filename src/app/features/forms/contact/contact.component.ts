@@ -1,3 +1,4 @@
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
@@ -7,42 +8,50 @@ import { ContactPayload } from '../../../core/models/api.models';
 @Component({
   selector: 'app-contact',
   standalone: true,
-  imports: [FormsModule],
+  imports: [IconComponent, FormsModule],
   template: `
     <section class="form-page-section" aria-labelledby="contactTitle">
       <div class="container container-narrow">
         <div class="form-container-card">
           <header class="form-header">
-            <span class="badge badge-neutral">Atención Personalizada</span>
-            <h1 id="contactTitle" class="form-title">Ponte en Contacto con Kangoo Xpress</h1>
-            <p class="form-desc">
-              Estamos aquí para resolver cualquier duda sobre tus envíos, cotizaciones corporativas o rastreo de paquetes.
-            </p>
+            <span class="badge badge-neutral">{{ i18n.t('contact.badge') }}</span>
+            <h1 id="contactTitle" class="form-title">{{ i18n.t('contact.title') }}</h1>
+            <p class="form-desc">{{ i18n.t('contact.desc') }}</p>
           </header>
 
           <div class="contact-channels-grid">
             <div class="channel-card">
-              <span class="channel-icon">📞</span>
-              <h3 class="channel-name">Teléfono EE. UU.</h3>
-              <p class="channel-val">+1 (713) 555-0142</p>
-              <span class="channel-note">Lun-Sáb: 9am - 6:30pm</span>
+              <span class="channel-icon"><kx-icon name="phone" [size]="20" /></span>
+              <h3 class="channel-name">{{ i18n.t('contact.phoneTitle') }}</h3>
+              <p class="channel-val"><a href="tel:7078009318" class="channel-link">707-800-9318</a></p>
+              <span class="channel-note">{{ i18n.t('contact.phoneNote') }}</span>
             </div>
             <div class="channel-card">
-              <span class="channel-icon">💬</span>
-              <h3 class="channel-name">WhatsApp Directo</h3>
-              <p class="channel-val">+1 (713) 555-0143</p>
-              <span class="channel-note">Atención rápida en línea</span>
+              <span class="channel-icon"><kx-icon name="message-circle" [size]="20" /></span>
+              <h3 class="channel-name">{{ i18n.t('contact.waTitle') }}</h3>
+              <p class="channel-val"><a href="https://api.whatsapp.com/send?phone=+17076127290" target="_blank" rel="noopener noreferrer" class="channel-link">+1 (707) 612-7290</a></p>
+              <span class="channel-note">{{ i18n.t('contact.waNote') }}</span>
+            </div>
+            <div class="channel-card">
+              <span class="channel-icon"><kx-icon name="mail" [size]="20" /></span>
+              <h3 class="channel-name">{{ i18n.t('contact.emailTitle') }}</h3>
+              <p class="channel-val"><a href="mailto:info@kangoo-xpress.com" class="channel-link">info@kangoo-xpress.com</a></p>
+              <span class="channel-note">{{ i18n.t('contact.emailNote') }}</span>
+            </div>
+            <div class="channel-card">
+              <span class="channel-icon"><kx-icon name="map-pin" [size]="20" /></span>
+              <h3 class="channel-name">{{ i18n.t('contact.officeTitle') }}</h3>
+              <p class="channel-val">321 Blodgett St Suite-A</p>
+              <span class="channel-note">Cotati, CA 94931</span>
             </div>
           </div>
 
           @if (isSuccess()) {
             <div class="success-alert">
-              <div class="success-icon">✓</div>
-              <h2 class="success-title">¡Mensaje Enviado con Éxito!</h2>
-              <p class="success-desc">
-                Gracias por escribirnos. Uno de nuestros asesores te responderá a la brevedad posible.
-              </p>
-              <button type="button" class="btn btn-secondary" (click)="resetForm()">Enviar otro mensaje</button>
+              <div class="success-icon"><kx-icon name="check" [size]="28" /></div>
+              <h2 class="success-title">{{ i18n.t('contact.successTitle') }}</h2>
+              <p class="success-desc">{{ i18n.t('contact.successDesc') }}</p>
+              <button type="button" class="btn btn-secondary" (click)="resetForm()">{{ i18n.t('contact.sendAnother') }}</button>
             </div>
           } @else {
             <form (ngSubmit)="onSubmit()" class="contact-form" #f="ngForm">
@@ -53,37 +62,37 @@ import { ContactPayload } from '../../../core/models/api.models';
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="cFullName" class="form-label">Nombre Completo *</label>
-                  <input id="cFullName" type="text" class="form-input" name="cFullName" [(ngModel)]="fullName" required placeholder="Tu nombre" />
+                  <label for="cFullName" class="form-label">{{ i18n.t('forms.fullName') }}</label>
+                  <input id="cFullName" type="text" class="form-input" name="cFullName" [(ngModel)]="fullName" required [placeholder]="i18n.t('contact.namePh')" autocomplete="name" />
                 </div>
                 <div class="form-group">
-                  <label for="cEmail" class="form-label">Correo Electrónico *</label>
-                  <input id="cEmail" type="email" class="form-input" name="cEmail" [(ngModel)]="email" required placeholder="tucorreo@ejemplo.com" />
+                  <label for="cEmail" class="form-label">{{ i18n.t('forms.email') }}</label>
+                  <input id="cEmail" type="email" class="form-input" name="cEmail" [(ngModel)]="email" required [placeholder]="i18n.t('forms.emailPh')" autocomplete="email" />
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="cSubject" class="form-label">Asunto del Mensaje *</label>
+                <label for="cSubject" class="form-label">{{ i18n.t('contact.subject') }}</label>
                 <select id="cSubject" class="form-select" name="cSubject" [(ngModel)]="subject" required>
-                  <option value="" disabled selected>Selecciona el tema de tu consulta...</option>
-                  <option value="Duda sobre Cotización">Duda sobre Cotización</option>
-                  <option value="Estatus de mi Paquete">Estatus de mi Paquete</option>
-                  <option value="Recolección a Domicilio">Recolección a Domicilio en EE. UU.</option>
-                  <option value="Facturación y Pagos">Facturación y Pagos</option>
-                  <option value="Otro">Otro Asunto</option>
+                  <option value="" disabled selected>{{ i18n.t('contact.subjectPh') }}</option>
+                  <option value="Duda sobre Cotización">{{ i18n.t('contact.subjectQuote') }}</option>
+                  <option value="Estatus de mi Paquete">{{ i18n.t('contact.subjectStatus') }}</option>
+                  <option value="Recolección a Domicilio">{{ i18n.t('contact.subjectPickup') }}</option>
+                  <option value="Facturación y Pagos">{{ i18n.t('contact.subjectBilling') }}</option>
+                  <option value="Otro">{{ i18n.t('contact.subjectOther') }}</option>
                 </select>
               </div>
 
               <div class="form-group">
-                <label for="cMessage" class="form-label">Mensaje o Detalle *</label>
-                <textarea id="cMessage" class="form-textarea" rows="4" name="cMessage" [(ngModel)]="message" required placeholder="¿En qué te podemos apoyar hoy?"></textarea>
+                <label for="cMessage" class="form-label">{{ i18n.t('contact.message') }}</label>
+                <textarea id="cMessage" class="form-textarea" rows="4" name="cMessage" [(ngModel)]="message" required [placeholder]="i18n.t('contact.messagePh')"></textarea>
               </div>
 
               <button type="submit" class="btn btn-primary btn-lg submit-btn" [disabled]="isSubmitting() || !f.valid">
                 @if (isSubmitting()) {
-                  <span>Enviando...</span>
+                  <span>{{ i18n.t('forms.sending') }}</span>
                 } @else {
-                  <span>Enviar Mensaje</span>
+                  <span>{{ i18n.t('contact.send') }}</span>
                 }
               </button>
             </form>
@@ -93,6 +102,7 @@ import { ContactPayload } from '../../../core/models/api.models';
     </section>
   `,
   styles: [`
+    .channel-link { color: inherit; text-decoration: none; &:hover { color: var(--kx-blue-600); text-decoration: underline; } }
     .form-page-section {
       padding: 3.5rem 1.25rem 5rem;
       background: var(--kangoo-surface-bg);
@@ -110,7 +120,7 @@ import { ContactPayload } from '../../../core/models/api.models';
     .form-desc { font-size: 0.95rem; color: var(--kangoo-neutral-text); }
     .contact-channels-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 1rem;
       margin-bottom: 2rem;
     }
@@ -125,8 +135,8 @@ import { ContactPayload } from '../../../core/models/api.models';
     .channel-name { font-size: 0.88rem; font-weight: 700; color: var(--kangoo-secondary); }
     .channel-val { font-size: 1rem; font-weight: 800; color: var(--kangoo-primary); margin: 0.2rem 0; }
     .channel-note { font-size: 0.75rem; color: var(--kangoo-neutral-muted); }
-    .form-row { display: grid; grid-template-columns: 1fr; gap: 1rem; }
-    @media (min-width: 640px) { .form-row { grid-template-columns: 1fr 1fr; } }
+    .form-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 1rem; }
+    @media (min-width: 640px) { .form-row { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
     .submit-btn { width: 100%; margin-top: 1rem; }
     .success-alert { text-align: center; padding: 2.5rem 1rem; }
     .success-icon { width: 64px; height: 64px; border-radius: 50%; background: var(--kangoo-success-light); color: var(--kangoo-success-dark); font-size: 2rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem; }

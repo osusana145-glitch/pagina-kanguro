@@ -1,3 +1,4 @@
+import { IconComponent } from '../../../shared/components/icon/icon.component';
 import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ApiService } from '../../../core/services/api.service';
@@ -7,13 +8,13 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
 @Component({
   selector: 'app-addresses',
   standalone: true,
-  imports: [FormsModule],
+  imports: [IconComponent, FormsModule],
   template: `
     <div class="addresses-container">
       <header class="addr-header">
         <div>
-          <h1 class="page-title">Libreta de Direcciones en México</h1>
-          <p class="page-subtitle">Guarda y administra las direcciones de tus familiares para agilizar tus envíos.</p>
+          <h1 class="page-title">{{ i18n.t('addresses.title') }}</h1>
+          <p class="page-subtitle">{{ i18n.t('addresses.subtitle') }}</p>
         </div>
 
         <button
@@ -21,7 +22,7 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
           class="btn btn-primary btn-sm"
           (click)="showNewAddressModal.set(true)"
         >
-          + Nueva Dirección
+          <kx-icon name="plus" [size]="16" />{{ i18n.t('addresses.new') }}
         </button>
       </header>
 
@@ -33,29 +34,29 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
               <div class="alias-group">
                 <span class="alias-title">{{ addr.alias }}</span>
                 @if (addr.is_default) {
-                  <span class="default-badge">Predeterminada</span>
+                  <span class="default-badge">{{ i18n.t('addresses.default') }}</span>
                 }
               </div>
-              <span class="pin-icon">📍</span>
+              <span class="pin-icon"><kx-icon name="map-pin" [size]="18" /></span>
             </div>
 
             <h3 class="recipient-name">{{ addr.recipient_name }}</h3>
-            <span class="recipient-phone">📞 {{ addr.phone }}</span>
+            <span class="recipient-phone"><kx-icon name="phone" [size]="14" /> {{ addr.phone }}</span>
 
             <p class="street-address">
               {{ addr.street }} #{{ addr.exterior_number }}
-              @if (addr.interior_number) { (Int. {{ addr.interior_number }}) }
+              @if (addr.interior_number) { ({{ i18n.t('addresses.interior', { n: addr.interior_number }) }}) }
             </p>
             <p class="neighborhood-city">
-              Col. {{ addr.neighborhood }}, CP {{ addr.postal_code }}
+              {{ i18n.t('addresses.colonia', { c: addr.neighborhood, cp: addr.postal_code }) }}
             </p>
             <p class="state-country">
-              {{ addr.municipality }}, {{ addr.state }}, México
+              {{ addr.municipality }}, {{ addr.state }}, {{ i18n.t('addresses.country') }}
             </p>
 
             @if (addr.references) {
               <div class="references-box">
-                <span class="ref-label">Referencias:</span>
+                <span class="ref-label">{{ i18n.t('addresses.references') }}</span>
                 <span class="ref-text">{{ addr.references }}</span>
               </div>
             }
@@ -66,34 +67,34 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
       <!-- Add New Address Modal Dialog -->
       @if (showNewAddressModal()) {
         <div class="modal-backdrop" (click)="showNewAddressModal.set(false)">
-          <div class="modal-dialog" (click)="$event.stopPropagation()" role="dialog" aria-modal="true">
+          <div class="modal-dialog" (click)="$event.stopPropagation()" role="dialog" aria-modal="true" aria-labelledby="addrModalTitle">
             <div class="modal-head">
-              <h2 class="modal-title">Agregar Nueva Dirección</h2>
-              <button type="button" class="close-btn" (click)="showNewAddressModal.set(false)">✕</button>
+              <h2 id="addrModalTitle" class="modal-title">{{ i18n.t('addresses.modalTitle') }}</h2>
+              <button type="button" class="close-btn" (click)="showNewAddressModal.set(false)" [attr.aria-label]="i18n.t('addresses.close')"><kx-icon name="x" [size]="18" /></button>
             </div>
 
             <form (ngSubmit)="saveNewAddress()" class="modal-form" #f="ngForm">
               <div class="form-row">
                 <div class="form-group">
-                  <label for="alias" class="form-label">Alias de la Dirección *</label>
-                  <input id="alias" type="text" class="form-input" [(ngModel)]="newAlias" name="alias" required placeholder="Ej. Casa Mamá / Tía Rosa" />
+                  <label for="alias" class="form-label">{{ i18n.t('addresses.alias') }}</label>
+                  <input id="alias" type="text" class="form-input" [(ngModel)]="newAlias" name="alias" required [placeholder]="i18n.t('addresses.aliasPh')" />
                 </div>
                 <div class="form-group">
-                  <label for="recipient" class="form-label">Nombre del Destinatario *</label>
-                  <input id="recipient" type="text" class="form-input" [(ngModel)]="newRecipient" name="recipient" required placeholder="Nombre completo" />
+                  <label for="recipient" class="form-label">{{ i18n.t('addresses.recipient') }}</label>
+                  <input id="recipient" type="text" class="form-input" [(ngModel)]="newRecipient" name="recipient" required [placeholder]="i18n.t('addresses.recipientPh')" />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="phone" class="form-label">Teléfono de Contacto (México) *</label>
+                  <label for="phone" class="form-label">{{ i18n.t('addresses.phone') }}</label>
                   <input id="phone" type="tel" class="form-input" [(ngModel)]="newPhone" name="phone" required placeholder="+52 (000) 000-0000" />
                 </div>
                 <!-- Postal Code Autocomplete -->
                 <div class="form-group">
                   <label for="cp" class="form-label">
-                    <span>Código Postal (5 dígitos) *</span>
-                    @if (isLookingUpCp()) { <span class="hint">Buscando...</span> }
+                    <span>{{ i18n.t('addresses.cp') }}</span>
+                    @if (isLookingUpCp()) { <span class="hint">{{ i18n.t('addresses.cpSearching') }}</span> }
                   </label>
                   <input
                     id="cp"
@@ -104,47 +105,48 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
                     (ngModelChange)="onCpLookup($event)"
                     name="cp"
                     required
-                    placeholder="Ej. 72000"
+                    inputmode="numeric"
+                    [placeholder]="i18n.t('addresses.cpPh')"
                   />
                 </div>
               </div>
 
               @if (cpData(); as cpInfo) {
                 <div class="cp-lookup-result">
-                  <span>Cobertura confirmada en <strong>{{ cpInfo.municipality }}, {{ cpInfo.state_name }}</strong></span>
+                  <span>{{ i18n.t('addresses.coverage') }} <strong>{{ cpInfo.municipality }}, {{ cpInfo.state_name }}</strong></span>
                 </div>
               }
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="street" class="form-label">Calle *</label>
-                  <input id="street" type="text" class="form-input" [(ngModel)]="newStreet" name="street" required placeholder="Nombre de calle o avenida" />
+                  <label for="street" class="form-label">{{ i18n.t('addresses.street') }}</label>
+                  <input id="street" type="text" class="form-input" [(ngModel)]="newStreet" name="street" required [placeholder]="i18n.t('addresses.streetPh')" />
                 </div>
                 <div class="form-group">
-                  <label for="extNum" class="form-label">No. Exterior *</label>
-                  <input id="extNum" type="text" class="form-input" [(ngModel)]="newExtNum" name="extNum" required placeholder="Ej. 124" />
+                  <label for="extNum" class="form-label">{{ i18n.t('addresses.ext') }}</label>
+                  <input id="extNum" type="text" class="form-input" [(ngModel)]="newExtNum" name="extNum" required [placeholder]="i18n.t('addresses.extPh')" />
                 </div>
               </div>
 
               <div class="form-row">
                 <div class="form-group">
-                  <label for="neighborhood" class="form-label">Colonia / Asentamiento *</label>
-                  <input id="neighborhood" type="text" class="form-input" [(ngModel)]="newNeighborhood" name="neighborhood" required placeholder="Nombre de la colonia" />
+                  <label for="neighborhood" class="form-label">{{ i18n.t('addresses.neighborhood') }}</label>
+                  <input id="neighborhood" type="text" class="form-input" [(ngModel)]="newNeighborhood" name="neighborhood" required [placeholder]="i18n.t('addresses.neighborhoodPh')" />
                 </div>
                 <div class="form-group">
-                  <label for="state" class="form-label">Estado *</label>
-                  <input id="state" type="text" class="form-input" [(ngModel)]="newState" name="state" required placeholder="Estado" />
+                  <label for="state" class="form-label">{{ i18n.t('addresses.state') }}</label>
+                  <input id="state" type="text" class="form-input" [(ngModel)]="newState" name="state" required [placeholder]="i18n.t('addresses.statePh')" />
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="references" class="form-label">Referencias visuales del domicilio</label>
-                <textarea id="references" class="form-textarea" rows="2" [(ngModel)]="newReferences" name="references" placeholder="Entre qué calles, color de fachada o señas particulares..."></textarea>
+                <label for="references" class="form-label">{{ i18n.t('addresses.refs') }}</label>
+                <textarea id="references" class="form-textarea" rows="2" [(ngModel)]="newReferences" name="references" [placeholder]="i18n.t('addresses.refsPh')"></textarea>
               </div>
 
               <div class="modal-actions">
-                <button type="button" class="btn btn-outline" (click)="showNewAddressModal.set(false)">Cancelar</button>
-                <button type="submit" class="btn btn-primary" [disabled]="!f.valid">Guardar Dirección</button>
+                <button type="button" class="btn btn-outline" (click)="showNewAddressModal.set(false)">{{ i18n.t('addresses.cancel') }}</button>
+                <button type="submit" class="btn btn-primary" [disabled]="!f.valid">{{ i18n.t('addresses.save') }}</button>
               </div>
             </form>
           </div>
@@ -176,7 +178,7 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
 
     .addresses-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
       gap: 1.25rem;
     }
 
@@ -316,11 +318,11 @@ import { SavedAddress, PostalCodeLookup } from '../../../core/models/api.models'
 
     .form-row {
       display: grid;
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
       gap: 1rem;
 
       @media (min-width: 600px) {
-        grid-template-columns: 1fr 1fr;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       }
     }
 

@@ -1,77 +1,105 @@
 // ==============================================================================
 // Kangoo Xpress - Design Tokens & Global CSS Variables
-// Official Brand Identity & Modern UI Tokens
+// Official Brand Identity & Design System (Inter Font & Official Logo Palette)
 // ==============================================================================
 
 :root {
-  // Brand Palette (Derived from Kangoo Xpress Logo)
-  --kangoo-primary: #E31B23;            // Rojo Kangoo (Canguro, acentos de marca, alertas/destacados)
-  --kangoo-primary-hover: #C5131A;
-  --kangoo-primary-active: #9E0F15;
-  --kangoo-primary-light: #FEE8E9;
-  --kangoo-primary-rgb: 227, 27, 35;
+  // Official Brand Palette (Sampled directly from Kangoo Xpress official logo)
+  --kx-blue-600: #002a8a;               // Primary blue: CTAs, links, interactive focus
+  --kx-blue-600-hover: #00216e;         // Hover state for primary blue
+  --kx-blue-900: #001a55;               // Dark navy: header darks, footer, text on light
+  --kx-blue-soft-1: #f0f3fa;            // Soft selection / section background
+  --kx-blue-soft-2: #dce3f3;            // Border highlight & soft chips
+  --kx-blue-soft-3: #b8c6e8;            // Subtle accents
 
-  --kangoo-secondary: #0A2540;          // Azul Marino Kangoo (Texto principal, barra nav, botones primarios)
-  --kangoo-secondary-hover: #0E2A4A;
-  --kangoo-secondary-dark: #061728;
-  --kangoo-secondary-light: #163E66;
-  --kangoo-secondary-rgb: 10, 37, 64;
+  // Brand Red Accent (Used with strict moderation; NEVER as full section backgrounds or non-destructive buttons)
+  --kx-red-500: #e10013;                // Brand red accent
+  --kx-red-error: #b3000f;              // Error states & validation alerts
 
-  // Neutrals & Surfaces
-  --kangoo-neutral-text: #333333;       // Gris Oscuro (Subtítulos, eslogan "Fast & Safe")
-  --kangoo-neutral-muted: #64748B;
-  --kangoo-neutral-light: #94A3B8;
-  --kangoo-surface-bg: #F4F6F8;         // Gris Claro de Fondo (Tarjetas, contrastes suaves)
-  --kangoo-surface-card: #FFFFFF;
-  --kangoo-surface-alt: #EBEFF4;
-  --kangoo-border: #E2E8F0;
-  --kangoo-border-focus: #0A2540;
+  // Semantic Status Colors
+  --kx-status-transit: #d9640f;         // In transit (icon / badge dot)
+  --kx-status-delivered: #17795e;       // Delivered / Completed
+  --kx-status-customs: #6b7fb3;         // Customs clearance (normal step, NEVER red)
 
-  // Semantic Status Tones
-  --kangoo-success: #10B981;            // Verde Éxito (Estatus completados / entregados)
-  --kangoo-success-light: #D1FAE5;
-  --kangoo-success-dark: #065F46;
+  // Neutrals (High contrast & AA compliance)
+  --kx-text-primary: #1e1f23;           // Main body text (>= 4.5:1 on white)
+  --kx-logo-gray: #333333;              // Logo gray
+  --kx-text-secondary: #54565a;         // Subtitles, metadata & secondary copy
+  --kx-border: #d4d7dd;                 // 1px card and table borders
+  --kx-bg-page: #f7f8fa;                // Overall page background
+  --kx-bg-card: #ffffff;                // Card surface
 
-  --kangoo-warning: #F59E0B;            // Naranja Tránsito (Estatus en tránsito / atención)
-  --kangoo-warning-light: #FEF3C7;
-  --kangoo-warning-dark: #92400E;
+  // Backward compatibility aliases for existing components
+  --kangoo-primary: var(--kx-blue-600);
+  --kangoo-primary-hover: var(--kx-blue-600-hover);
+  --kangoo-primary-active: var(--kx-blue-900);
+  --kangoo-primary-light: var(--kx-blue-soft-1);
+  --kangoo-primary-rgb: 0, 42, 138;
 
-  --kangoo-info-customs: #2563EB;       // Azul Aduana (Paso crítico aduana)
-  --kangoo-info-customs-light: #DBEAFE;
-  --kangoo-info-customs-dark: #1E40AF;
+  --kangoo-secondary: var(--kx-blue-900);
+  --kangoo-secondary-hover: var(--kx-blue-600);
+  --kangoo-secondary-dark: #001442;
+  --kangoo-secondary-light: var(--kx-blue-soft-2);
+  --kangoo-secondary-rgb: 0, 26, 85;
 
-  --kangoo-danger: #EF4444;
-  --kangoo-danger-light: #FEE2E2;
+  --kangoo-neutral-text: var(--kx-text-primary);
+  --kangoo-neutral-muted: var(--kx-text-secondary);
+  --kangoo-neutral-light: #7b7d82;
+  --kangoo-surface-bg: var(--kx-bg-page);
+  --kangoo-surface-card: var(--kx-bg-card);
+  --kangoo-surface-alt: var(--kx-blue-soft-1);
+  --kangoo-border: var(--kx-border);
+  --kangoo-border-focus: var(--kx-blue-600);
 
-  // Typography
-  --font-family-display: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-family-body: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  --font-family-mono: 'JetBrains Mono', monospace;
+  --kangoo-success: var(--kx-status-delivered);
+  --kangoo-success-light: #e6f5f0;
+  --kangoo-success-dark: #0e4c3b;
 
-  // Spacing & Border Radii (rounded-xl, rounded-2xl)
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
-  --radius-xl: 20px;
-  --radius-2xl: 28px;
+  --kangoo-warning: var(--kx-status-transit);
+  --kangoo-warning-light: #fef4ec;
+  --kangoo-warning-dark: #91420a;
+
+  --kangoo-info-customs: var(--kx-status-customs);
+  --kangoo-info-customs-light: var(--kx-blue-soft-1);
+  --kangoo-info-customs-dark: #4b5d8c;
+
+  --kangoo-danger: var(--kx-red-error);
+  --kangoo-danger-light: #fde8ea;
+  --kangoo-accent-red: var(--kx-red-500);
+
+  // Typography: Single Font (Inter Variable)
+  --font-family-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-family-display: var(--font-family-sans);
+  --font-family-body: var(--font-family-sans);
+  --font-family-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  // Shapes & Radii: Contained 6-8px corners (no exaggerated 16-28px radii)
+  --kx-radius-sm: 6px;
+  --kx-radius: 8px;
+  --radius-sm: 6px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 8px;
+  --radius-2xl: 8px;
   --radius-full: 9999px;
 
   // Mobile Touch Targets (Strict accessibility rule >= 44px)
   --touch-target-min: 44px;
-  --button-height-md: 48px;
-  --button-height-lg: 56px;
+  --button-height-md: 44px;
+  --button-height-lg: 48px;
 
-  // Elevation & Shadows
-  --shadow-xs: 0 1px 2px rgba(10, 37, 64, 0.05);
-  --shadow-sm: 0 2px 8px rgba(10, 37, 64, 0.06);
-  --shadow-md: 0 8px 24px rgba(10, 37, 64, 0.08);
-  --shadow-lg: 0 16px 40px rgba(10, 37, 64, 0.12);
-  --shadow-xl: 0 24px 60px rgba(10, 37, 64, 0.16);
-  --shadow-primary-glow: 0 8px 24px rgba(227, 27, 35, 0.28);
-  --shadow-card-hover: 0 12px 30px rgba(10, 37, 64, 0.12);
+  // Elevation: Flat 1px borders, subtle floating shadows only for dropdowns/modals
+  --shadow-none: none;
+  --shadow-xs: none;
+  --shadow-sm: none;
+  --shadow-md: none;
+  --shadow-lg: 0 4px 14px rgba(0, 26, 85, 0.08);
+  --shadow-xl: 0 12px 32px rgba(0, 26, 85, 0.12);
+  --shadow-primary-glow: none;
+  --shadow-card-hover: none;
 
   // Transitions
-  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-normal: 250ms cubic-bezier(0.4, 0, 0.2, 1);
-  --transition-bounce: 350ms cubic-bezier(0.34, 1.56, 0.64, 1);
+  --transition-fast: 150ms ease;
+  --transition-normal: 200ms ease;
+  --transition-bounce: 250ms ease;
 }
