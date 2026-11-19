@@ -18,7 +18,12 @@ export const COMMON_I18N: FeatureDictionary = {
     'wa.msgTracking': 'Hi Kangoo Xpress, I need help with my package tracking status.',
     'wa.msgCheckout': 'Hi Kangoo Xpress, I have a question about the quote for my boxes to Mexico.',
     'wa.msgSpecial': 'Hi Kangoo Xpress, I have an oversized package and need a quote.',
-    'wa.msgCenters': 'Hi Kangoo Xpress, I would like to confirm the drop-off center hours.'
+    'wa.msgCenters': 'Hi Kangoo Xpress, I would like to confirm the drop-off center hours.',
+
+    'store.iosLine1': 'Download on the',
+    'store.androidLine1': 'GET IT ON',
+    'store.iosAria': 'Download on the App Store',
+    'store.androidAria': 'Get it on Google Play'
   },
   es: {
     'header.phoneAria': 'Llamar a atención al cliente',
@@ -36,6 +41,11 @@ export const COMMON_I18N: FeatureDictionary = {
     'wa.msgTracking': 'Hola Kangoo Xpress, necesito ayuda con el estatus de rastreo de mi paquete.',
     'wa.msgCheckout': 'Hola Kangoo Xpress, tengo una duda sobre la cotización de mis cajas a México.',
     'wa.msgSpecial': 'Hola Kangoo Xpress, tengo un paquete con medidas especiales y requiero cotización.',
-    'wa.msgCenters': 'Hola Kangoo Xpress, quisiera confirmar los horarios del centro de acopio para llevar mi caja.'
+    'wa.msgCenters': 'Hola Kangoo Xpress, quisiera confirmar los horarios del centro de acopio para llevar mi caja.',
+
+    'store.iosLine1': 'Descárgalo en el',
+    'store.androidLine1': 'DISPONIBLE EN',
+    'store.iosAria': 'Descárgalo en el App Store',
+    'store.androidAria': 'Disponible en Google Play'
   }
 };

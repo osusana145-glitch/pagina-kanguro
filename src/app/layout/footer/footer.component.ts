@@ -1,12 +1,15 @@
-import { Component, ChangeDetectionStrategy, inject } from '@angular/core';
+import { Component, ChangeDetectionStrategy, inject, signal } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { LogoComponent } from '../../shared/components/logo/logo.component';
 import { I18nService } from '../../core/services/i18n.service';
+import { ApiService } from '../../core/services/api.service';
+import { MobileAppLinks } from '../../core/models/api.models';
+import { StoreBadgesComponent } from '../../shared/components/store-badges/store-badges.component';
 
 @Component({
   selector: 'app-footer',
   standalone: true,
-  imports: [RouterLink, LogoComponent],
+  imports: [RouterLink, LogoComponent, StoreBadgesComponent],
   template: `
     <footer class="footer-global" role="contentinfo">
       <!-- Top Trust Banner -->
@@ -103,16 +106,7 @@ import { I18nService } from '../../core/services/i18n.service';
             <p class="app-desc">
               {{ i18n.t('footer.appDesc') }}
             </p>
-            <div class="app-badges-stack">
-              <a href="/#app" class="app-store-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.99.6-2.63 1.35-.57.65-1.07 1.71-0.94 2.73 1 .08 2.03-.48 2.65-1.23z"/></svg>
-                <span>App Store (iOS)</span>
-              </a>
-              <a href="/#app" class="app-store-pill">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3.6 1.7A1.5 1.5 0 0 0 3 3v18c0 .5.2.9.6 1.3l9.8-9.8L3.6 1.7zm11.2 11.2 2.6 2.6-13 7.5 10.4-10.1zm0-1.8L4.4 1 17.4 8.5l-2.6 2.6zm1.4 1.4 3.7-2.1c1-.6 1-1.6 0-2.2l-3.7-2.1-1.8 1.8 1.8 4.6z"/></svg>
-                <span>Google Play (Android)</span>
-              </a>
-            </div>
+            <kx-store-badges class="footer-badges" [onDark]="true" [iosUrl]="appLinks()?.ios_url" [androidUrl]="appLinks()?.android_url" />
 
             <div class="payment-methods">
               <span class="payment-title">{{ i18n.t('footer.payments') }}</span>
@@ -141,6 +135,8 @@ import { I18nService } from '../../core/services/i18n.service';
     </footer>
   `,
   styles: [`
+    .footer-badges { margin-bottom: .25rem; }
+    .footer-contact-info p { color: var(--kx-blue-soft-2); }
     .footer-contact-info a { color: #fff; text-decoration: underline; text-underline-offset: 2px; }
     .app-desc { color: var(--kx-blue-soft-2); font-size: .9375rem; line-height: 1.5; margin-bottom: .75rem; }
     .payment-methods { margin-top: 1.25rem; }
@@ -283,30 +279,7 @@ import { I18nService } from '../../core/services/i18n.service';
       }
     }
 
-    .app-badges-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 0.45rem;
-    }
 
-    .app-store-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.45rem 0.75rem;
-      background: rgba(255, 255, 255, 0.08);
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      border-radius: var(--kx-radius-sm);
-      color: #FFFFFF;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background var(--transition-fast);
-
-      &:hover {
-        background: rgba(255, 255, 255, 0.16);
-      }
-    }
 
     .p-badge {
       background: rgba(255, 255, 255, 0.1);
@@ -344,6 +317,13 @@ import { I18nService } from '../../core/services/i18n.service';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class FooterComponent {
+  /** Store links from GET /site-content; badges stay non-clickable until set. */
+  readonly appLinks = signal<MobileAppLinks | undefined>(undefined);
+
+  constructor() {
+    inject(ApiService).getSiteContent().subscribe(c => this.appLinks.set(c.mobile_app));
+  }
+
   readonly i18n = inject(I18nService);
   readonly currentYear = new Date().getFullYear();
 }

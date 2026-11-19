@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { I18nService } from '../../../core/services/i18n.service';
 import { MobileAppLinks } from '../../../core/models/api.models';
 import { IconComponent, IconName } from '../../../shared/components/icon/icon.component';
+import { StoreBadgesComponent } from '../../../shared/components/store-badges/store-badges.component';
 
 /**
  * Promotes the official Kangoo Xpress mobile app. Store links come from
@@ -12,7 +13,7 @@ import { IconComponent, IconName } from '../../../shared/components/icon/icon.co
 @Component({
   selector: 'kx-home-app-section',
   standalone: true,
-  imports: [RouterLink, IconComponent],
+  imports: [RouterLink, IconComponent, StoreBadgesComponent],
   template: `
     <section class="section app-section" id="app" aria-labelledby="appHeading">
       <div class="container app-layout">
@@ -34,17 +35,8 @@ import { IconComponent, IconName } from '../../../shared/components/icon/icon.co
           </ul>
 
           <div class="actions">
-            @if (links()?.ios_url) {
-              <a class="btn btn-primary" [href]="links()!.ios_url" target="_blank" rel="noopener noreferrer">
-                <kx-icon name="download" [size]="18" />{{ i18n.t('home.appStoreBtn') }}
-              </a>
-            }
-            @if (links()?.android_url) {
-              <a class="btn btn-primary" [href]="links()!.android_url" target="_blank" rel="noopener noreferrer">
-                <kx-icon name="download" [size]="18" />{{ i18n.t('home.appPlayBtn') }}
-              </a>
-            }
-            <a routerLink="/rastrear" class="btn btn-outline">
+            <kx-store-badges [iosUrl]="links()?.ios_url" [androidUrl]="links()?.android_url" />
+            <a routerLink="/rastrear" class="btn btn-outline track-web">
               <kx-icon name="search" [size]="18" />{{ i18n.t('home.appTrackWeb') }}
             </a>
           </div>
@@ -81,7 +73,8 @@ import { IconComponent, IconName } from '../../../shared/components/icon/icon.co
     .feats li { display: flex; gap: 1rem; align-items: flex-start; }
     .feats h3 { font-size: 1.0625rem; margin-bottom: .125rem; }
     .feats .icon-tile { background: #fff; }
-    .actions { display: flex; flex-wrap: wrap; gap: .75rem; }
+    .actions { display: flex; flex-wrap: wrap; align-items: center; gap: .75rem; }
+    .track-web { min-height: 48px; }
     .hint { display: flex; align-items: center; gap: .5rem; margin-top: 1rem; font-size: .9375rem; color: var(--kx-text-primary); }
 
     .phone {

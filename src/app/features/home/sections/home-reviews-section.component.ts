@@ -65,6 +65,7 @@ import { IconComponent } from '../../../shared/components/icon/icon.component';
     :host { display: block; }
     .review { display: flex; flex-direction: column; gap: 1rem; margin: 0; }
     .stars { display: flex; gap: 2px; color: var(--kx-blue-600); .off { color: var(--kx-border); } }
+    .stars kx-icon:not(.off) ::ng-deep svg { fill: currentColor; }
     blockquote { color: var(--kx-text-primary); flex: 1; }
     figcaption { display: flex; align-items: center; gap: .75rem; font-size: .9375rem; color: var(--kx-text-primary); }
     .avatar {
